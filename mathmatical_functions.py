@@ -56,6 +56,8 @@ def get_pretty_date_format():
         current_date = str(now.strftime('%A, %B the %drd %Y'))
     elif day_let == 1 or day_let == 0:
         current_date = str(now.strftime('%A, %B the %dst %Y'))
+    elif day_let == 2:
+        current_date = str(now.strftime('%A, %B the %dnd %Y'))
     else:
         current_date = str(now.strftime('%A, %B the %dth %Y'))
     return current_date  # Returns a string containing date, eg, Saturday, May the 29th 2021
