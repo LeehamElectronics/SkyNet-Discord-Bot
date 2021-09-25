@@ -60,8 +60,7 @@ class Events(commands.Cog):
     # verification. Don't send username or profile pic in case it is not PG. Then once the user has been verified, send
     # a message into the channel saying that they have been verified!
     @commands.Cog.listener()
-    async def on_member_join(self, before, after):
-        member = after.member
+    async def on_member_join(self, member):
         # A way to make the following code run just before on_member_join occurs? I need to do this in order to keep
         # track of who invited who on my server. Thanks
         invites_after_join = await member.guild.invites()
