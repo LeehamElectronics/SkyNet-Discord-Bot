@@ -60,7 +60,12 @@ class Events(commands.Cog):
     # verification. Don't send username or profile pic in case it is not PG. Then once the user has been verified, send
     # a message into the channel saying that they have been verified!
     @commands.Cog.listener()
-    async def on_member_join(self, member):
+    async def on_member_join(self, before, after):
+        member = after.member
+        # A way to make the following code run just before on_member_join occurs? I need to do this in order to keep
+        # track of who invited who on my server. Thanks
+        invites_after_join = await member.guild.invites()
+
         print(str(member.name) + " joined discord server")
         await self.client.wait_until_ready()  # Stops code from running when the Bot has not yet fully loaded up.
         user_db_path = self.user_db_path  # At end of function we will backup user db
@@ -81,15 +86,35 @@ class Events(commands.Cog):
         # Getting the invites after the user joining so we can compare it with the first one, and see which invite uses
         # number increased
         invites_after_join = await member.guild.invites()
+        print("INVITE OBJ TYPE:")
+        print(str(type(invites_after_join)))
+        print(invites_after_join)
+        print("LENGTHS:")
+        print(str(len(invites_before_join)))
+        print(str(len(invites_after_join)))
         # Now we will update the invites JSON so it's ready for next time!
+        simplified_invites = {}
+        for invite in invites_after_join:
+            # create temp dict obj
+            invite_dict = {'name': str(invite.inviter.name), 'code': str(invite.code), 'uses': str(invite.uses)}
+            # append the dict into a list
+            simplified_invites[str(invite.code)] = invite_dict
+
         with open(str(self.config['general_info']['invites_db_path']), 'w') as file:
-            yaml.dump(invites_after_join, file)
-
-
+            yaml.dump(simplified_invites, file)
         # Loops for each invite we have for the guild the user joined.
         found = False
 
-        if new_invite_obj not in invites_before_join:
+        if simplified_invites == invites_before_join:
+            print("THERE EXACTLY THE SAME HECKKKK")
+
+        if len(invites_after_join) != len(invites_before_join):
+            print("Amount of invites before is not the same as after, hence a new invite was created...")
+            for invite in invites_after_join:
+                if str(invite.code) not in invites_before_join:
+                    print("CONFIRMED THE INIVTE IS NEW WOOOOW HERE IT IS BOIIS")
+
+        if invites_after_join not in invites_before_join:
             print("This was a NEW invite:")
             for invite_obj_temp in invites_before_join:
                 # Now, we're using the function we created just before to check which invite count is bigger than it was
