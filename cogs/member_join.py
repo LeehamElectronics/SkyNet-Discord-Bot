@@ -83,35 +83,40 @@ class Events(commands.Cog):
         invites_after_join = await member.guild.invites()
         # Now we will update the invites JSON so it's ready for next time!
         with open(str(self.config['general_info']['invites_db_path']), 'w') as file:
-            yaml.dump(invites_before_join, file)
+            yaml.dump(invites_after_join, file)
+
 
         # Loops for each invite we have for the guild the user joined.
         found = False
-        for invite_obj_temp in invites_before_join:
-            # Now, we're using the function we created just before to check which invite count is bigger than it was
-            # before the user joined.
-            invite_code = invites_before_join[invite_obj_temp]['code']
-            invite_uses = int(invites_before_join[invite_obj_temp]['uses'])
-            # TODO: Does this account for BRAND new invite codes????
 
-            new_invite_obj = find_invite_by_code(invites_after_join, invite_code)
+        if new_invite_obj not in invites_before_join:
+            print("This was a NEW invite:")
+            for invite_obj_temp in invites_before_join:
+                # Now, we're using the function we created just before to check which invite count is bigger than it was
+                # before the user joined.
+                invite_code = invites_before_join[invite_obj_temp]['code']
+                invite_uses = int(invites_before_join[invite_obj_temp]['uses'])
+                # TODO: Does this account for BRAND new invite codes????
 
-            if invite_uses < new_invite_obj.uses:
-                found = True
-                # Now that we found which link was used, we will print a couple things in our console; the name, invite
-                # code used, and the person who created the invite code, or the inviter.
-                print(f"Member {member.name} Joined")
-                print(f"Invite Code: {invite_code}")
-                print(f"Inviter: {new_invite_obj.inviter}")
-                # We will now update our cache so it's ready
-                # for the next user that joins the guild
-                # We break here since we already found which
-                # one was used and there is no point in
-                # looping when we already got what we wanted
-                break
-        if not found:
-            # Somehow we did not find the associated invite, lets report this a return a None object
-            new_invite_obj = None  # Perhaps turn this into a default invite obj?
+                new_invite_obj = find_invite_by_code(invites_after_join, invite_code)
+
+                if invite_uses < new_invite_obj.uses:
+                    found = True
+                    # Now that we found which link was used, we will print a couple things in our console; the name, invite
+                    # code used, and the person who created the invite code, or the inviter.
+                    print(f"Member {member.name} Joined")
+                    print(f"Invite Code: {invite_code}")
+                    print(f"Inviter: {new_invite_obj.inviter}")
+                    # We will now update our cache so it's ready
+                    # for the next user that joins the guild
+                    # We break here since we already found which
+                    # one was used and there is no point in
+                    # looping when we already got what we wanted
+                    break
+            if not found:
+                # Somehow we did not find the associated invite, lets report this and return a None object
+                new_invite_obj = None  # Perhaps turn this into a default invite obj?
+                print("INIVTE NOT FOUND")
 
         member_id_temp = str(member.id)
         inviter_id_temp = str(new_invite_obj.inviter.id)
