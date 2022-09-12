@@ -148,28 +148,11 @@ for i in NewsFeed.entries:
     # when looking for new articles!
     news_title_list.append(i.title)  # Append article to list...
 
-#############################
-#   MC giveaway variables   #
-#############################
-give_away_types = ["MiniCoin", "SkyCoin", "SurvivalCoin"]  # Types of coins that will be given during auto giveaways
-global_auto_giveaway_message_object = ""  # Not sure?
-cancel_future_giveaways = True  # Not sure?
-
 ###################################################################
 #                    Bot conversation variables                   #
 #   Used to store variables when Admins are interacting with Bot  #
 #     This will soon be deprecated and replaced with a GUI        #
 ###################################################################
-is_in_giveaway_conversation = False
-giveaway_conversation_admin_name = ""
-giveaway_conversation_step_index = 0
-giveaway_conversation_title = ""
-giveaway_conversation_info = ""
-giveaway_conversation_ends = ""
-giveaway_conversation_other = ""
-giveaway_conversation_step_image_url = ""
-giveaway_conversation_step_who_gets_pinged = ""
-give_away_test_embed = ""
 awaiting_admins_suggestion_reason = False
 message_ref_remind_admin_for_suggestions_reason = ""
 awaiting_admins_name_for_suggestion_reason = ""
@@ -453,16 +436,7 @@ async def on_reaction_add(reaction, user):
     # Reacted message info:
     reacted_message_embeds = reaction.message.embeds
     reacted_message_id = reaction.message.id
-    if str(reacted_message_embeds[0].title) == "🎉 Daily MC Give Away 🎉":
-        print("User reacted to a give away")
-        members_roles = user.roles
-        # print(str(roles))
-        if mc_linked_role in members_roles:
-            print("Sufficient perms!")
-        else:
-            await reaction.message.remove_reaction(reaction, user)
-
-    elif str(reacted_message_embeds[0].title) == "Confirm Suggestion?":
+    if str(reacted_message_embeds[0].title) == "Confirm Suggestion?":
         print(str(user.nick) + " Reacted to Suggestion Confirmation from " + str(reacted_message_embeds[0].author.name))
         if str(user.nick) == str(reacted_message_embeds[0].author.name):
             print("Original author...")
@@ -696,28 +670,6 @@ async def on_raw_reaction_remove(payload):
                     print("They already didnt have the MC Updates role!")
                     await bot_channel.send(
                         ("You did not have the MC Updates Notifications role in the first place?? {0.mention}".format(
-                            member_temp)))
-            elif str(emoji_temp) == "🎉":
-                print("🎉 EMOJI")
-                print("EMOJI: " + str(emoji_temp))
-                print(str(type(emoji_temp)))
-                if reaction.custom_emoji:
-                    print("This is a custom emoji from SkyNet!")
-                else:
-                    print("This is not a custom Emoji")
-
-                print("User Removed MC Giveaways role!!")
-                members_roles = member_temp.roles
-                if mc_give_away_sub_role in members_roles:
-                    print("User already has mc_give_away_sub_role role")
-                    await bot_channel.send(
-                        ("We have removed your MC Giveaways Notifications role {0.mention}!!".format(member_temp)))
-                    await member_temp.remove_roles(mc_give_away_sub_role)
-
-                else:
-                    print("They already didnt have the MC Updates role!")
-                    await bot_channel.send(
-                        ("You did not have the MC Giveaways Notifications role in the first place?? {0.mention}".format(
                             member_temp)))
             elif emoji_temp == bw_emoji:
                 print("BW EMOJI")
@@ -1064,17 +1016,6 @@ async def on_raw_reaction_add(payload):
                 else:
                     print("This is not a custom Emoji")
 
-                members_roles = member_temp.roles
-                if mc_give_away_sub_role in members_roles:
-                    print("User already has mc_give_away_sub_role role")
-                    await bot_channel.send(("You already have the MC Giveaways role {0.mention}!!".format(member_temp)))
-
-                else:
-                    print("Adding mc_give_away_sub_role role!")
-                    await member_temp.add_roles(mc_give_away_sub_role)
-                    await bot_channel.send((
-                        "Good job {0.mention}, you now have the MC Giveaways Role, notifications are sent in {1.mention}".format(
-                            member_temp, mc_server_updates_channel)))
             elif emoji_temp == bw_emoji:
                 print("BW EMOJI")
                 print(str(type(emoji_temp)))
@@ -1325,17 +1266,6 @@ async def on_message_edit(before, after):  # TODO: Check for swear words here!!!
 #########################################################
 @client.event
 async def on_message(message):
-    global is_in_giveaway_conversation
-    global giveaway_conversation_admin_name
-    global giveaway_conversation_step_index
-    global giveaway_conversation_title
-    global giveaway_conversation_info
-    global giveaway_conversation_ends
-    global giveaway_conversation_other
-    global giveaway_conversation_step_who_gets_pinged
-    global giveaway_conversation_step_image_url
-    global give_away_test_embed
-
     global users_dict_of_dict
     global users_list_of_dict
 
@@ -1366,7 +1296,7 @@ async def on_message(message):
         return
     # Check if message was sent in DM:
     elif isinstance(message.channel,
-                    discord.abc.PrivateChannel):  # https://discordpy.readthedocs.io/en/latest/migrating.html?highlight=is_private
+                    discord.abc.PrivateChannel):
         await log_message_into_admins(content, author, channel_of_message, edited_message, content_before, attachments)
         return
 
@@ -1421,89 +1351,6 @@ async def on_message(message):
             await send_suggestion_feedback(reason)
             await message.delete()
             await message_ref_remind_admin_for_suggestions_reason.delete()
-
-    if is_in_giveaway_conversation:
-        if message.author == giveaway_conversation_admin_name:
-            if content_lowered == "!giveaway":  # This runs on initial sadly... just return and ignore right?
-                return
-            elif content_lowered == "exit":
-                print("Exiting and cancelling conversation!")
-                is_in_giveaway_conversation = False
-                giveaway_conversation_admin_name = ""
-                giveaway_conversation_step_index = 0
-                await message.channel.send("Give Away cancelled!")
-                return
-            print("Replying to give away conversation: " + str(message.content) + "At index: " + str(
-                giveaway_conversation_step_index))
-            if giveaway_conversation_step_index == 0:
-                giveaway_conversation_step_index += 1
-                giveaway_conversation_title = str(message.content)
-                await message.channel.send("Enter brief give away info: ")
-
-            elif giveaway_conversation_step_index == 1:
-                giveaway_conversation_step_index += 1
-                giveaway_conversation_info = str(message.content)
-                await message.channel.send("Enter Give Away Date and time: ")
-
-            elif giveaway_conversation_step_index == 2:
-                giveaway_conversation_step_index += 1
-                giveaway_conversation_ends = str(message.content)
-                await message.channel.send(
-                    "Ping the role or everyone you wish to notify, if no role is specified, we wont ping anyone: ")
-
-            elif giveaway_conversation_step_index == 3:
-                giveaway_conversation_step_index += 1
-                giveaway_conversation_step_who_gets_pinged = str(message.content)
-                await message.channel.send(
-                    "Enter URL for custom image, or type 'no' if you want to display the default image instead")
-
-            elif giveaway_conversation_step_index == 4:
-                giveaway_conversation_step_index += 1
-                giveaway_conversation_step_image_url = str(message.content)
-                if giveaway_conversation_step_image_url == "no":
-                    print("Empty URL, we will display default image!")
-                    giveaway_conversation_step_image_url = "https://i.imgur.com/ualewXd.png"
-                await message.channel.send("Enter short other give away info: ")
-
-            elif giveaway_conversation_step_index == 5:
-                giveaway_conversation_other = str(message.content)
-                giveaway_conversation_step_index += 1
-
-                give_away_test_embed = discord.Embed(
-                    title="🎉 Give Away 🎉",
-                    description=giveaway_conversation_other,
-                    color=discord.Colour.orange()
-                )
-                give_away_test_embed.set_footer(text="React with 🎉 to enter!")
-                give_away_test_embed.set_thumbnail(url=giveaway_conversation_step_image_url)
-                give_away_test_embed.set_author(name=giveaway_conversation_ends,
-                                                icon_url="https://i.imgur.com/BQLKiEh.png")
-                give_away_test_embed.add_field(name=giveaway_conversation_title,
-                                               value=giveaway_conversation_info + " " + giveaway_conversation_step_who_gets_pinged,
-                                               inline=False)
-                give_away_test_reference = await message.channel.send(embed=give_away_test_embed)
-                await give_away_test_reference.add_reaction(emoji='🎉')
-
-                await message.channel.send("If you are happy with the giveaway, write 'yes' and we will send it!")
-
-            elif giveaway_conversation_step_index == 6:
-                confirmation = str(message.content)
-                giveaway_conversation_step_index = 0
-
-                if confirmation.lower() == "yes":
-                    print("Giveaway confirmed, sending embed...")
-                    is_in_giveaway_conversation = False
-                    giveaway_conversation_admin_name = ""
-                    await announcements_channel.send(giveaway_conversation_step_who_gets_pinged)
-                    ref = await announcements_channel.send(embed=give_away_test_embed)
-                    await ref.add_reaction(emoji='🎉')
-                    await message.channel.send("Sent!")
-
-                else:
-                    print("Giveaway cancelled")
-                    await message.channel.send("Give away is cancelled!")
-                    is_in_giveaway_conversation = False
-                    giveaway_conversation_admin_name = ""
 
 
 #########################################################
@@ -1618,126 +1465,6 @@ async def backup_user_data_loop():
         f"🧾 User data has been backed up: {current_date} {current_time}")
 
 
-@tasks.loop(minutes=1)
-# @tasks.loop(seconds=10)
-async def random_mc_giveaway_cycler():
-    now = datetime.datetime.now()
-    # print("NOW: " + str(now))
-    time_f = str(now.strftime('%H'))
-    # time_f = "18"  # TESTING PURPOSES!
-    if time_f == "18":
-        if global_auto_giveaway_message_object == "":
-            print("This was an initial give away, we wont send a winner embed")
-            if cancel_future_giveaways:
-                print("Give away in cancel mode!")
-            else:
-                await random_mc_giveaway()
-                await asyncio.sleep(7200)
-        else:
-            await announce_daily_give_away_winner()
-            # Sleep for 10 min, then it will auto repeat
-            await asyncio.sleep(300)
-            if cancel_future_giveaways:
-                print("Give away in cancel mode!")
-            else:
-                await random_mc_giveaway()
-                await asyncio.sleep(7200)
-
-
-async def random_mc_giveaway():
-    global global_auto_giveaway_message_object
-    print("Random give away commencing!")
-    random_val = random.randint(0, len(give_away_types) - 1)
-    type = give_away_types[random_val]
-    thumb_nail_image_url = "https://i.imgur.com/Iw4o4JF.png"
-    image_url = "https://i.imgur.com/ualewXd.png"
-    print("CHOSEN: " + type)
-    random_val_2 = random.randint(800, 10000)
-    print("Money: $" + str(random_val_2))
-    if type == "SkyCoin":
-        image_url = "https://i.imgur.com/hjPCEvX.png"
-        thumb_nail_image_url = "https://i.imgur.com/xBKTohn.png"
-    elif type == "MiniCoin":
-        image_url = "https://i.imgur.com/4K9lmGu.png"
-        thumb_nail_image_url = "https://i.imgur.com/gPjx9gv.png"
-    elif type == "SurvivalCoin":
-        thumb_nail_image_url = "https://i.imgur.com/Ln0olnF.png"
-        image_url = "https://i.imgur.com/xOjWhUB.png"
-
-    title = "**$" + str(random_val_2) + " " + str(type) + "**"
-    embed_info = "React with 🎉 to enter \n (**MC LINKED only!**)"
-
-    embed = discord.Embed(
-        title="🎉 Daily MC Give Away 🎉",
-        description=giveaway_conversation_other,
-        color=discord.Colour.orange()
-    )
-    embed.set_footer(text="(Only for MC Linked Members)")
-    embed.set_thumbnail(url=thumb_nail_image_url)
-    embed.set_author(name="Each Day at 6:00 PM (AEST)", icon_url="https://i.imgur.com/ualewXd.png")
-    embed.add_field(name=title, value=embed_info, inline=False)
-    embed.set_image(url=image_url)
-    await mc_server_updates_channel.send("Hey {0.mention} Check Out Today's Give Away".format(mc_give_away_sub_role))
-    global_auto_giveaway_message_object = await mc_server_updates_channel.send(embed=embed)
-    await global_auto_giveaway_message_object.add_reaction(emoji='🎉')
-
-
-async def announce_daily_give_away_winner():
-    global global_auto_giveaway_message_object
-    print("Announcing Daily Give Away Winner!")
-    candidates = []
-    message_ref = await mc_server_updates_channel.fetch_message(global_auto_giveaway_message_object.id)
-    reactions_temp = message_ref.reactions
-    for i in reactions_temp:
-        if i.emoji == "🎉":
-            async for user in i.users():
-                users_roles = user.roles
-                if mc_linked_role not in users_roles or admin_role in users_roles:  # Deny admins and non linked members
-                    print("Not an MC linked member (or an admin)! pass...")
-                    pass
-                else:
-                    candidates.append(user)
-    num_of_candidates = len(candidates)
-    if num_of_candidates == 0:
-        print("Give away canceled there are no candidates!")
-        await message_ref.delete()  # Delete the give away message
-        embed = discord.Embed(
-            title="Today's Give Away Cancelled!",
-            description="No one entered the Give Away, how sad?",
-            color=discord.Colour.orange()
-        )
-        embed.set_footer(text="Next Give Away starts in 5 minutes, what will it be?? 😱")
-        embed.set_author(name="Daily Give Away", icon_url="https://i.imgur.com/ualewXd.png")
-        msg = await mc_server_updates_channel.send(embed=embed)
-        await msg.add_reaction(emoji='😭')
-        return
-    print("There are {0} candidates".format(str(num_of_candidates)))
-    winner_index = random.randint(0, num_of_candidates - 1)
-    winner = candidates[winner_index]
-    winners_name = winner.name
-    print("Winner is: " + str(winners_name))
-    users_dict_of_dict[str(winner.id)]["give_aways_won"] += 1
-    embed_dict = message_ref.embeds[0].to_dict()
-    prize = str(embed_dict['fields'][0]['name'])
-    # Send message into console to give member thier award
-    await message_ref.delete()  # Delete the give away message
-    embed = discord.Embed(
-        title="🎉 Daily MC Give Away 🎉",
-        description=giveaway_conversation_other,
-        color=discord.Colour.orange()
-    )
-    embed.set_footer(text="Next Give Away Starts in 5 minutes! What will it be?? 😱")
-    embed.set_author(name="We Have A Winner!", icon_url="https://i.imgur.com/ualewXd.png")
-    embed.set_thumbnail(url=winner.display_avatar.url)
-    embed.add_field(name="Congrats " + str(winners_name), value="You Won " + prize, inline=False)
-    embed.set_image(url="https://i.imgur.com/zq1OheB.png")
-    await mc_server_updates_channel.send("The Winner is {0.mention}".format(winner))
-    global_auto_giveaway_message_object = await mc_server_updates_channel.send(embed=embed)
-    await global_auto_giveaway_message_object.add_reaction(emoji='👍')
-    await global_auto_giveaway_message_object.add_reaction(emoji='😁')
-    await global_auto_giveaway_message_object.add_reaction(emoji='😭')
-
-
 #########################################################
 #                                                       #
 #            LEVELING FUNCTIONS BELOW HERE:             #
@@ -1813,31 +1540,8 @@ def increase_users_total_messages(user):
 #########################################################
 #                                                       #
 #            COMMAND FUNCTIONS BELOW HERE:              #
-#          (Trying to keep things tidy okay)            #
 #                                                       #
 #########################################################
-@client.command()  # Make a suggestion
-async def toggle_daily_giveaways(ctx):
-    global cancel_future_giveaways
-    print("Giveaway command executing")
-    members_roles = ctx.message.author.roles
-    if admin_role in members_roles:
-        print("Sufficient role!")
-        if cancel_future_giveaways:
-            cancel_future_giveaways = False
-            await ctx.message.channel.send(
-                "Daily give aways have been enabled, run the command again to disable daily MC giveaways!")
-            await mc_server_updates_channel.send("Daily MC Give Aways have been re-enabled! 😁")
-            random_mc_giveaway_cycler.start()
-        else:
-            cancel_future_giveaways = True
-            await ctx.message.channel.send(
-                "The next daily giveaways will be cancelled, run the command again to re-enable daily giveaways!")
-            await mc_server_updates_channel.send("Sorry All, Daily MC Give Aways have been temporarily disabled! 😭")
-            random_mc_giveaway_cycler.stop()
-    else:
-        await ctx.message.channel.send("Oh, so you're am Admin r u??")
-
 
 @client.command()  # Make a suggestion
 async def auto_check_all_roles(ctx):
@@ -1858,31 +1562,7 @@ async def auto_check_all_roles(ctx):
 
 
 @client.command()  # Make a suggestion
-async def giveaway(ctx):
-    global giveaway_conversation_step_index
-    global is_in_giveaway_conversation
-    global giveaway_conversation_admin_name
-    is_in_giveaway_conversation = False
-    print("Giveaway command executing")
-    members_roles = ctx.message.author.roles
-    # print(str(roles))
-    if admin_role in members_roles:
-        print("Sufficient role!")
-        giveaway_conversation_step_index = 0
-        await ctx.message.channel.send("Please type the title of give away. Type 'exit' at any time to cancel")
-        giveaway_conversation_admin_name = ctx.message.author
-        is_in_giveaway_conversation = True
-
-    else:
-        await ctx.message.channel.send("Oh, so you're am Admin r u??")
-
-
-@client.command()  # Make a suggestion
 async def post_rules(ctx):
-    global giveaway_conversation_step_index
-    global is_in_giveaway_conversation
-    global giveaway_conversation_admin_name
-    is_in_giveaway_conversation = False
     print("Rules command executing")
     members_roles = ctx.message.author.roles
     if admin_role in members_roles:
