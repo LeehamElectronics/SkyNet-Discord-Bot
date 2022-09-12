@@ -77,9 +77,14 @@ image_urls = global_configuration_dict['image_links']  # keeps code cleaner when
 #                                                                                                                      #
 #                                                                                                                      #
 ########################################################################################################################
-# Server intents are used to tell Discord API what information our bot needs access to:
+
 intents = discord.Intents.all()
+intents.message_content = True
 intents.members = True
+client = commands.Bot(command_prefix='!', intents=intents, case_insensitive=True)
+
+# help command does not work without this statement... idk why
+client.remove_command("help")
 
 ####################
 #  Misc variables  #
@@ -124,11 +129,6 @@ def import_users_dict_of_dict_db(db):
 ##########################################
 # Setup code for bot command and intents #
 ##########################################
-client = commands.Bot(command_prefix="!", intents=intents, case_insensitive=True)
-
-# logging.basicConfig(level=logging.DEBUG)
-# help command does not work without these statement... idk why
-client.remove_command("help")
 
 ########################
 #       Cogs           #
@@ -498,7 +498,7 @@ async def on_reaction_add(reaction, user):
                 voting_embed.set_thumbnail(
                     url="https://i.imgur.com/VTQvbGc.png")  # https://i.imgur.com/Iw4o4JF.png"
                 voting_embed.set_author(name=str(user.nick) + "'s Suggestion",
-                                        icon_url=user.avatar_url)
+                                        icon_url=user.display_avatar.url)
                 voting_embed.add_field(name="** **",
                                        value=str(reaction.emoji) + " " + str(priority) + " Priority",
                                        inline=False)
@@ -1342,6 +1342,7 @@ async def on_message(message):
     global awaiting_admins_suggestion_reason
     global awaiting_admins_name_for_suggestion_reason
     # Put this stuff into memory to lower the amount of lookups and str() calls to save CPU power:
+
     content = str(message.content)
     content_lowered = str(content.lower())
     author_id = message.author.id
@@ -1525,7 +1526,7 @@ async def on_member_remove(member):
         color=discord.Colour.orange()
     )
     member_leave_embed.set_footer(text="pls rejoin...")
-    member_leave_embed.set_thumbnail(url=str(member.avatar_url))
+    member_leave_embed.set_thumbnail(url=str(member.display_avatar.url))
     member_leave_embed.set_author(name="SkyNet", icon_url=image_urls['crying_emoji'])
     await member_log_channel.send(embed=member_leave_embed)
 
@@ -1727,7 +1728,7 @@ async def announce_daily_give_away_winner():
     )
     embed.set_footer(text="Next Give Away Starts in 5 minutes! What will it be?? 😱")
     embed.set_author(name="We Have A Winner!", icon_url="https://i.imgur.com/ualewXd.png")
-    embed.set_thumbnail(url=winner.avatar_url)
+    embed.set_thumbnail(url=winner.display_avatar.url)
     embed.add_field(name="Congrats " + str(winners_name), value="You Won " + prize, inline=False)
     embed.set_image(url="https://i.imgur.com/zq1OheB.png")
     await mc_server_updates_channel.send("The Winner is {0.mention}".format(winner))
@@ -1915,7 +1916,7 @@ async def suggest(ctx, *sugg):
             suggestion_confirm_embed.set_thumbnail(
                 url="https://i.imgur.com/VTQvbGc.png")  # https://i.imgur.com/Iw4o4JF.png"
             suggestion_confirm_embed.set_author(name=ctx.message.author.nick,
-                                                icon_url=ctx.message.author.avatar_url)
+                                                icon_url=ctx.message.author.display_avatar.url)
             suggestion_confirm_embed.add_field(name="** **",
                                                value="🟢 - Low Priority \n 🟠 - Medium Priority \n 🔴 - High Priority",
                                                inline=False)
@@ -2148,7 +2149,7 @@ async def send_suggestion_feedback(reason):
         suggestion_removed_embed.set_thumbnail(
             url="https://i.imgur.com/VTQvbGc.png")  # https://i.imgur.com/Iw4o4JF.png"
         suggestion_removed_embed.set_author(name="{0}'s Suggestion Was Deleted".format(user_that_suggested_it.name),
-                                            icon_url=user_that_suggested_it.avatar_url)
+                                            icon_url=user_that_suggested_it.display_avatar.url)
         suggestion_removed_embed.add_field(name="Suggestion:",
                                            value=suggestion_message + " *from* {0.mention}".format(
                                                user_that_suggested_it),
@@ -2167,7 +2168,7 @@ async def send_suggestion_feedback(reason):
         suggestion_removed_embed.set_footer(text="Thanks so much for your suggestions!")
         suggestion_removed_embed.set_thumbnail(url="https://i.imgur.com/VTQvbGc.png")
         suggestion_removed_embed.set_author(name="{0}'s Suggestion Was Approved".format(user_that_suggested_it.name),
-                                            icon_url=user_that_suggested_it.avatar_url)
+                                            icon_url=user_that_suggested_it.display_avatar.url)
         suggestion_removed_embed.add_field(name="Suggestion:", value=suggestion_message + " *from* {0.mention}".format(
             user_that_suggested_it), inline=False)
         suggestion_removed_embed.add_field(name="Reason:", value=reason, inline=False)
@@ -2234,7 +2235,7 @@ async def log_message_into_admins(content, author, channel_of_message, edited_me
             color=discord.Colour.orange()
         )
         embed.set_footer(text=str(now.strftime('%H:%M:%S on %A, %B the %dth, %Y')))
-        embed.set_thumbnail(url=author.avatar_url)  # https://i.imgur.com/Iw4o4JF.png"
+        embed.set_thumbnail(url=author.display_avatar.url)  # https://i.imgur.com/Iw4o4JF.png"
         embed.set_author(name=author, icon_url="https://i.imgur.com/Iw4o4JF.png")
         embed.add_field(name="Before", value=str(content_before).replace('@', 'AT'))
         embed.add_field(name="After", value=str(content).replace('@', 'AT'))
@@ -2247,7 +2248,7 @@ async def log_message_into_admins(content, author, channel_of_message, edited_me
             color=discord.Colour.orange()
         )
         embed.set_footer(text=str(now.strftime('%H:%M:%S on %A, %B the %dth, %Y')))
-        embed.set_thumbnail(url=author.avatar_url)  # https://i.imgur.com/Iw4o4JF.png"
+        embed.set_thumbnail(url=author.display_avatar.url)  # https://i.imgur.com/Iw4o4JF.png"
         embed.set_author(name=author, icon_url="https://i.imgur.com/Iw4o4JF.png")
         embed.add_field(name="Message", value=content.replace('@', 'AT'))
 

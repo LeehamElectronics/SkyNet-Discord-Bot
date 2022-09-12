@@ -11,4 +11,6 @@ sgmllib3k==1.0.0
 soupsieve==2.2.1
 typing-extensions==3.10.0.0
 yarl==1.6.3
-requests==2.9.1
+feedparser>=6.0.10
+mysql-connector-python>=8.0.30
+Pillow>=9.2.0

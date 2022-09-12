@@ -13,7 +13,6 @@ from discord.ext import commands
 from discord.utils import get
 from discord.ext import tasks  # For scheduling repeated function calls such as timers.
 import asyncio  # For running asynchronous code...
-from discord_slash import SlashCommand, SlashContext  # For slash commands!
 
 # ----- Misc ------ #
 import datetime
