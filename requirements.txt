@@ -4,14 +4,8 @@ attrs==21.2.0
 beautifulsoup4==4.9.3
 bs4==0.0.1
 chardet==4.0.0
-discord==1.0.1
-discord-py-slash-command==1.2.0
-discord.py==1.7.2
-feedparser==6.0.2
 idna==3.2
 multidict==5.1.0
-mysql-connector==2.2.9
-Pillow==8.0.1
 PyYAML==5.4.1
 sgmllib3k==1.0.0
 soupsieve==2.2.1

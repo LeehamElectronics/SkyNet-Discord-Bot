@@ -28,7 +28,6 @@ from discord.ext import commands
 from discord.utils import get
 from discord.ext import tasks  # For scheduling repeated function calls such as timers.
 import asyncio  # For running asynchronous code...
-from discord_slash import SlashCommand, SlashContext  # For slash commands!
 
 # misc #
 import logging  # Should implement this at some stage...
@@ -103,8 +102,6 @@ is_startup_routine = True
 #     User Database global variables      #
 #                                         #
 ###########################################
-users_dict_of_dict = {}
-users_list_of_dict = []
 user_db_path = str(global_configuration_dict['general_info']['user_db_path']) + '.json'
 ###########################################
 #        Put User Data into memory!       #
@@ -128,7 +125,6 @@ def import_users_dict_of_dict_db(db):
 # Setup code for bot command and intents #
 ##########################################
 client = commands.Bot(command_prefix="!", intents=intents, case_insensitive=True)
-slash = SlashCommand(client, sync_commands=True, sync_on_cog_reload=True)
 
 # logging.basicConfig(level=logging.DEBUG)
 # help command does not work without these statement... idk why
