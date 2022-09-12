@@ -1,34 +1,5 @@
 # Discord related API packages #
 import discord
-from discord.ext import commands
-from discord.utils import get
-from discord.ext import tasks  # For scheduling repeated function calls such as timers.
-import asyncio  # For running asynchronous code...
-
-# misc #
-import logging  # Should implement this at some stage...
-import json  # We use JSON to dump our Python dictionaries into a JSON file format
-import os  # Interact with OS through Python for listing dir's and the like
-import random  # Pretty random right?
-from difflib import SequenceMatcher  # For checking how similar a string is to another string, like auto correct!
-import traceback  # For error logging
-
-# Time and Date packages because I am lazy #
-import time  # Mr wolf?
-import datetime
-from datetime import date
-
-# RSS Feeds and Web interacting #  TODO: Make embed for JW News
-import feedparser  # for RSS Feeds!
-import urllib.request  # For getting web data from JW.org and WOL
-from bs4 import BeautifulSoup  # For ciphering HTML data
-import urllib.request, io
-
-# Pillow is used for dynamic image processing #
-from PIL import Image
-from PIL import ImageFont
-from PIL import ImageDraw
-
 # internal packages #
 from mathmatical_functions import get_pretty_date_format
 

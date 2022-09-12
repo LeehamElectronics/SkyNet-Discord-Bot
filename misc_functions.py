@@ -3,18 +3,9 @@
 #         Misc functions for making code cleaner        #
 #                                                       #
 #########################################################
-
-###################################
-#   Import modules into program   #
-###################################
-# Discord related API packages #
 import discord
-from discord.ext import commands
 from discord.utils import get
-from discord.ext import tasks  # For scheduling repeated function calls such as timers.
 import asyncio  # For running asynchronous code...
-
-# ----- Misc ------ #
 import datetime
 import os
 import re  # For removing all non integers form a string, this is for converting @mentions into user ID
@@ -30,7 +21,6 @@ from messages import warn_message_to_warned_user
 from messages import unban_message_to_banned_user
 from messages import mute_message_to_muted_user
 from messages import un_mute_message_to_un_muted_user
-
 
 #############################################################
 #                       Image processing                    #

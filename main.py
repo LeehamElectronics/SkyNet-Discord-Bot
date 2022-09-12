@@ -27,35 +27,20 @@ import discord
 from discord.ext import commands
 from discord.utils import get
 from discord.ext import tasks  # For scheduling repeated function calls such as timers.
-import asyncio  # For running asynchronous code...
 
 # misc #
-import logging  # Should implement this at some stage...
-import json  # We use JSON to dump our Python dictionaries into a JSON file format
 import os  # Interact with OS through Python for listing dir's and the like
 import random  # Pretty random right?
 from difflib import SequenceMatcher  # For checking how similar a string is to another string, like auto correct!
-import traceback  # For error logging
 import yaml
 
-# Time and Date packages because I am lazy #
-import time  # Mr wolf?
+# Time and Date packages
+import time  #
 import datetime
 from datetime import date
 
 # RSS Feeds and Web interacting #
 import feedparser  # for RSS Feeds!
-import urllib.request  # For getting web data from JW.org and WOL
-from bs4 import BeautifulSoup  # For ciphering HTML data
-import urllib.request, io
-
-# Networking #
-import mysql.connector  # For interacting with the internal MySQL Server
-
-# Pillow is used for dynamic image processing #
-from PIL import Image
-from PIL import ImageFont
-from PIL import ImageDraw
 
 # These imports are from local .py files:
 from load_configs import share_global_config_dict_elsewhere, read_rules_into_mem
@@ -65,19 +50,13 @@ from discord_embed_generators import generate_help_menu
 from database_related import get_mc_stats_embed, check_if_user_is_mc_linked
 from misc_functions import update_member_data, check_roles, verify_member, assign_list_of_roles_to_member, retrieve_members_role_ids, punishments
 
-
 print("Loading Configuration...")
 global_configuration_dict = share_global_config_dict_elsewhere()  # Load our configuration file into memory
 image_urls = global_configuration_dict['image_links']  # keeps code cleaner when referencing image urls
 
-########################################################################################################################
-#                                                                                                                      #
-#                                                                                                                      #
-#                                        Global permanent variables assigned here                                      #
-#                                                                                                                      #
-#                                                                                                                      #
-########################################################################################################################
-
+##########################################
+# Setup code for bot command and intents #
+##########################################
 intents = discord.Intents.all()
 intents.message_content = True
 intents.members = True
@@ -124,11 +103,6 @@ def import_users_dict_of_dict_db(db):
     global users_dict_of_dict
     users_dict_of_dict = db
     write_user_data(users_dict_of_dict, user_db_path)  # Update the JSON file right away for testing...
-
-
-##########################################
-# Setup code for bot command and intents #
-##########################################
 
 ########################
 #       Cogs           #
@@ -1388,7 +1362,6 @@ async def on_member_remove(member):
 #########################################################
 #                                                       #
 #             CYCLE FUNCTIONS BELOW HERE:               #
-#          (Trying to keep things tidy okay)            #
 #                                                       #
 #########################################################
 @tasks.loop(minutes=2)
@@ -1468,7 +1441,6 @@ async def backup_user_data_loop():
 #########################################################
 #                                                       #
 #            LEVELING FUNCTIONS BELOW HERE:             #
-#          (Trying to keep things tidy okay)            #
 #                                                       #
 #########################################################
 

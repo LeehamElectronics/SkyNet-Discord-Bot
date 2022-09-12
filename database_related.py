@@ -1,19 +1,12 @@
 ###################################
 #   Import modules into program   #
 ###################################
-# Discord related API packages #
 import discord
-from discord.ext import commands
-from discord.utils import get
-from discord.ext import tasks  # For scheduling repeated function calls such as timers.
-import asyncio  # For running asynchronous code...
-
 import datetime
 import json
 from load_configs import share_global_config_dict_elsewhere
-# Networking #
 import mysql.connector  # For interacting with the internal MySQL Server
-import urllib.request, io
+import urllib.request
 
 ########################################################################################################################
 #                                                                                                                      #

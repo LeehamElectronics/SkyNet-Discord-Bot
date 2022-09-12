@@ -1,7 +1,5 @@
 import os
-import random
 import traceback
-
 import asyncio
 import discord
 from discord.ext import commands
