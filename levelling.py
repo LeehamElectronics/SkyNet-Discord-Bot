@@ -1,4 +1,5 @@
 # Simple adds a specific amount of XP to the user
+import datetime
 import time
 import database
 
@@ -24,14 +25,18 @@ async def manual_level_up(user, channel):
 
 
 def try_to_add_add_experience(user, added_exp):  # Test if user is permitted to have XP added to them
-    current_time = round(time.time(), 1)
-    if current_time - database.fetch_member_last_message_time(user) > 8:
-        # sufficient time has passed since last message, we will now add the XP into user_db
-        current_xp, current_level = database.fetch_member_xp_level(user)
-        new_exp = current_xp + added_exp
-        database.update_member_xp_level(user, new_exp, current_level)
-    else:
-        return
+    if database.fetch_member_last_message_time(user) is not None:
+        now_time = datetime.datetime.now()
+        difference = now_time - database.fetch_member_last_message_time(user)
+        datetime.timedelta(0, 8, 562000)
+
+        if difference.seconds > 8:
+            # sufficient time has passed since last message, we will now add the XP into user_db
+            current_xp, current_level = database.fetch_member_xp_level(user)
+            new_exp = current_xp + added_exp
+            database.update_member_xp_level(user, new_exp, current_level)
+        else:
+            return
 
 
 # is this even used? idk...

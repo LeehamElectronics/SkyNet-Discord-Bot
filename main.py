@@ -86,6 +86,7 @@ async def load_cogs():
             print('Loading cog: ' + str(filename))
             await client.load_extension(f'cogs.{filename[:-3]}')
 
+
 #############################
 #  JW.org RSS Feed Variable #
 #############################
@@ -164,16 +165,6 @@ wt_not_role_assign_msg_id = str(rr_embed_id_dict['wt_not_role_assign_msg_id'])
 mc_updates_role_assign_msg_id = str(rr_embed_id_dict['mc_updates_role_assign_msg_id'])
 programmer_role_assign_msg_id = str(rr_embed_id_dict['programmer_role_assign_msg_id'])
 jw_news_role_assign_id = str(rr_embed_id_dict['jw_news_role_assign_id'])
-
-########################################################################################################################
-#                                                                                                                      #
-#                                        Discord Server Channel ID information                                         #
-#                                                                                                                      #
-########################################################################################################################
-###############################
-#      General Channels       #
-###############################
-
 
 
 ######################################################

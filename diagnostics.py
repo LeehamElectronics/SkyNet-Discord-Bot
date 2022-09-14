@@ -1,5 +1,8 @@
 import datetime
 
+# logging level:
+logging_level = 1
+
 
 class LoggingColors:
     HEADER = '\033[95m'
@@ -13,10 +16,14 @@ class LoggingColors:
     UNDERLINE = '\033[4m'
 
 
-def log_error(severity, error_type, message):
+def log_error(severity, error_type, message, trace_message):
     # severity is a string such as 'severe' or 'minor'
     # error_type can be 'functional' or 'database'
     # message is a custom string describing the error
     # log to db, Discord, and local console
     now = datetime.datetime.now()
-    print(f'{LoggingColors.WARNING}ERROR LOG ({severity}) {LoggingColors.OKCYAN}{now}> {LoggingColors.OKBLUE}Type: {error_type} : {LoggingColors.FAIL}{message}')
+    if logging_level == 0:
+        print(f'{LoggingColors.WARNING}ERROR LOG ({severity}) {LoggingColors.OKCYAN}{now}> {LoggingColors.OKBLUE}Type: {error_type} : {LoggingColors.FAIL}{message}')
+    else:
+        print(
+            f'{LoggingColors.WARNING}ERROR LOG ({severity}) {LoggingColors.OKCYAN}{now}> {LoggingColors.OKBLUE}Type: {error_type} : {LoggingColors.FAIL}{message} : {LoggingColors.ENDC}{trace_message}')

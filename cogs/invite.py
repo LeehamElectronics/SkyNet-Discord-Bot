@@ -5,7 +5,7 @@ from discord.ext import commands
 import configuration
 
 
-class Events(commands.Cog):
+class InviteEvents(commands.Cog):
     def __init__(self, client):
         self.client = client
         self.config = configuration.ConfigFile.root_conf
@@ -32,4 +32,4 @@ class Events(commands.Cog):
 
 
 async def setup(client):
-    await client.add_cog(Events(client))
+    await client.add_cog(InviteEvents(client))
