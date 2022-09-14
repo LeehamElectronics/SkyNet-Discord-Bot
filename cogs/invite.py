@@ -1,22 +1,20 @@
 ###################################
 #   Import modules into program   #
 ###################################
-import discord
 from discord.ext import commands
-from load_configs import share_global_config_dict_elsewhere  # Use this to find role ID's from config.yml
+import configuration
 
 
 class Events(commands.Cog):
     def __init__(self, client):
         self.client = client
-        self.config = share_global_config_dict_elsewhere()
+        self.config = configuration.ConfigFile.root_conf
         self.user_db_path = self.config['general_info']['user_db_path'] + '.json'
         self.channel_ids = self.config['discord_channel_ids']
 
     @commands.Cog.listener()
     async def on_ready(self):
         print("🟢 Events.py loaded successfully.\n-----")
-        self.config = share_global_config_dict_elsewhere()
         self.user_db_path = self.config['general_info']['user_db_path'] + '.json'
         self.channel_ids = self.config['discord_channel_ids']
 

@@ -6,7 +6,6 @@
 import discord
 from discord.utils import get
 import asyncio  # For running asynchronous code...
-import datetime
 import os
 import re  # For removing all non integers form a string, this is for converting @mentions into user ID
 
@@ -23,9 +22,6 @@ from messages import unban_message_to_banned_user
 from messages import mute_message_to_muted_user
 from messages import un_mute_message_to_un_muted_user
 
-#############################################################
-#                       Image processing                    #
-#############################################################
 # Pillow is used for dynamic image processing #
 from PIL import Image
 from PIL import ImageFont
@@ -428,51 +424,6 @@ def get_fonts(font, size):
     else:
         dir = r"\fonts\BurbankBigCondensed-Black.otf"
     return ImageFont.truetype(str(cwd + dir), size)
-
-
-########################################################################
-#                                                                      #
-#  EXPERIMENTAL: Add XP and Level Up Users form misc_functions.py      #
-#  Then we will need to parse user_db BACK into the main.py though cog #
-#                                                                      #
-########################################################################
-# Simple adds a specific amount of XP to the user
-async def manual_add_experience(user, exp, channel, user_db):
-    # Here we need to get the current user database into function:
-    user_id = str(user.id)
-    user_db[user_id]["experience"] += exp
-    await manual_level_up(user, channel, user_db)
-    return user_db
-
-
-# Used to check if player can level up or level up MULTIPLE levels, and then it does so and announces it to user.
-async def manual_level_up(user, channel, user_db):
-    user_id = str(user.id)
-    user_finished_leveling_up = False
-
-    initial_lvl = user_db[user_id]["level"]  # We will compare against this at break of loop
-    while not user_finished_leveling_up:
-        experience = user_db[user_id]["experience"]
-        level = user_db[user_id]["level"]
-        xp_needed = level ** 4
-        if experience > xp_needed:
-            # user has leveled up, hooray! (don't announce it yet because they may level up even more!)
-            user_db[user_id]["level"] += 1
-        else:
-            user_finished_leveling_up = True
-            if int(initial_lvl) < int(user_db[user_id]["level"]):
-                await channel.send(
-                    f":tada: Congrats {user.mention}, you levelled up from {initial_lvl} to level " + str(
-                        user_db[user_id]["level"]))
-            else:
-                # I'll keep this for now, but if it gets annoying it will be removed...
-                await channel.send(
-                    f"😢 Sorry {user.mention}, you did not get enough XP to level up! Maybe next time...")
-    return user_db
-
-    # DEPRECATED FOR NOW: We don't run this because I moved the function back into main.py
-    # VERY IMPORTANT: We need to give the user db back to the main.py, only here for reference
-    # update_users_dict_of_dict_from_elsewhere(user_db_dict_of_dict)
 
 
 def find_invite_by_code(invite_list, code):

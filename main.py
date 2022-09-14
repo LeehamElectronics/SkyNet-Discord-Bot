@@ -32,17 +32,12 @@ from discord.ext import tasks  # For scheduling repeated function calls such as 
 import os  # Interact with OS through Python for listing dir's and the like
 from difflib import SequenceMatcher  # For checking how similar a string is to another string, like auto correct!
 import yaml
-
-# Time and Date packages
-import time  #
 import datetime
-from datetime import date
-
-# RSS Feeds and Web interacting #
 import feedparser  # for RSS Feeds!
 
 # These imports are from local .py files:
 import configuration
+import database
 from load_configs import read_rules_into_mem
 
 print("Loading Configuration...")
@@ -76,15 +71,10 @@ command_list = ["!stat", "!stats", "!help", '!reload', '!load', '!unload']  # TO
 # helps prevent getting blocked by Discord's servers when I restart the bot three times in a row.)
 is_startup_routine = True
 
-###########################################
-#                                         #
-#     User Database global variables      #
-#                                         #
-###########################################
-user_db_path = str(global_configuration_dict['general_info']['user_db_path']) + '.json'
-###########################################
-#        Put User Data into memory!       #
-###########################################
+########################
+#         db           #
+########################
+database.create_tables()
 
 
 ########################
@@ -93,9 +83,8 @@ user_db_path = str(global_configuration_dict['general_info']['user_db_path']) + 
 async def load_cogs():
     for filename in os.listdir('cogs'):
         if filename.endswith('.py'):
-            if filename == 'cog_loader':
-                print('Loading cog: ' + str(filename))
-                await client.load_extension(f'cogs.{filename[:-3]}')
+            print('Loading cog: ' + str(filename))
+            await client.load_extension(f'cogs.{filename[:-3]}')
 
 #############################
 #  JW.org RSS Feed Variable #
@@ -386,68 +375,6 @@ async def update_online_members_vc_placeholder():
     temp = str("Online: " + online_member_count_auto + "/" + member_count_auto)
     await online_members_vc_channel.edit(name=temp)
     print("finished updating online_members_vc_placeholder channel")
-
-
-#########################################################
-#                                                       #
-#            LEVELING FUNCTIONS BELOW HERE:             #
-#                                                       #
-#########################################################
-
-# Simple adds a specific amount of XP to the user
-async def manual_add_experience(user, exp, channel):
-    # Here we need to get the current user database into function:
-    user_id = str(user.id)
-    # users_dict_of_dict[user_id]["experience"] += exp
-    await manual_level_up(user, channel)
-
-
-# Used to check if player can level up or level up MULTIPLE levels, and then it does so and announces it to user.
-async def manual_level_up(user, channel):
-    user_id = str(user.id)
-    user_finished_leveling_up = False
-
-    # initial_lvl = users_dict_of_dict[user_id]["level"]  # We will compare against this at break of loop
-    while not user_finished_leveling_up:
-        experience = users_dict_of_dict[user_id]["experience"]
-        level = users_dict_of_dict[user_id]["level"]
-        xp_needed = level ** 4
-        if experience > xp_needed:
-            # user has leveled up, hooray! (don't announce it yet because they may level up even more!)
-            users_dict_of_dict[user_id]["level"] += 1
-        else:
-            user_finished_leveling_up = True
-            if int(initial_lvl) < int(users_dict_of_dict[user_id]["level"]):
-                await channel.send(
-                    f":tada: Congrats {user.mention}, you levelled up from {initial_lvl} to level " + str(
-                        users_dict_of_dict[user_id]["level"]))
-            else:
-                # I'll keep this for now, but if it gets annoying it will be removed...
-                await channel.send(
-                    f"😢 Sorry {user.mention}, you did not get enough XP to level up! Maybe next time...")
-
-
-async def try_to_add_add_experience(user, exp):  # Test if user is permitted to have XP added to them
-    user_id = str(user.id)
-    current_time = round(time.time(), 1)
-    if current_time - users_dict_of_dict[user_id]["last_message"] > 8:
-        # sufficient time has passed since last message, we will now add the XP into user_db
-        users_dict_of_dict[user_id]["experience"] += exp
-        users_dict_of_dict[user_id]["last_message"] = current_time
-    else:
-        return
-
-
-async def try_to_level_up_member(user, channel):  # Used to check if player can level up
-    user_id = str(user.id)
-    experience = users_dict_of_dict[user_id]["experience"]
-    level = users_dict_of_dict[user_id]["level"]
-    xp_needed = level ** 4
-    if experience > xp_needed:
-        # user was able to level up, hooray!
-        users_dict_of_dict[user_id]["level"] += 1
-        await bot_channel.send(
-            f":tada: Congrats {user.mention}, you leveled up to level: " + str(users_dict_of_dict[user_id]["level"]))
 
 
 #########################################################

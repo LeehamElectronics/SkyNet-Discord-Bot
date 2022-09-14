@@ -2,18 +2,12 @@
 #   Import modules into program   #
 ###################################
 import discord
-import datetime
 import json
-from load_configs import share_global_config_dict_elsewhere
 import mysql.connector  # For interacting with the internal MySQL Server
 import urllib.request
+import configuration
 
-########################################################################################################################
-#                                                                                                                      #
-#                                                initialize databases                                                  #
-#                                                                                                                      #
-########################################################################################################################
-global_configuration_dict = share_global_config_dict_elsewhere()
+global_configuration_dict = configuration.ConfigFile.root_conf
 
 #######################################
 #  Database for DiscordSRV MC Plugin  #

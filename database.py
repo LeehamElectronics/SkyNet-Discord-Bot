@@ -1,4 +1,4 @@
-import logging
+import diagnostics
 
 from mysql.connector import MySQLConnection, Error
 from python_mysql_dbconfig import read_db_config
@@ -20,7 +20,7 @@ def create_tables():
     total_message_deletes BIGINT, 
     last_message_sent_time DATE, 
     experience BIGINT, 
-    level INT, 
+    level BIGINT, 
     first_server_join DATE, 
     full_name VARCHAR(150), 
     nick VARCHAR(150), 
@@ -116,7 +116,7 @@ def increment_member_messages_count(message, msg_type):
     elif msg_type == "total_message_deletes":
         pass
     else:
-        logging.log_error('severe', 'functional', 'increment_member_messages_count was fed invalid msg_type')
+        diagnostics.log_error('severe', 'functional', 'increment_member_messages_count was fed invalid msg_type')
         return
     try:
         db_config = read_db_config()
@@ -194,3 +194,59 @@ def insert_deleted_message_log(message, date):
         c.close()
     except Error as e:
         return e
+
+
+def fetch_member_xp_level(member):
+    userid = str(member.id)
+    try:
+        db_config = read_db_config()
+        conn = MySQLConnection(**db_config)
+        c = conn.cursor()
+        c.execute("""SELECT experience, level FROM user_management
+                  WHERE discord_uuid = %s""", (userid, ))
+        user_record = c.fetchall()[0]
+        xp = int(user_record['experience'])
+        level = int(user_record['level'])
+
+        c.close()
+        return xp, level
+
+    except Error as e:
+        diagnostics.log_error('severe', 'database', 'fetch_member_xp_level() failed to read from db')
+        return e
+
+
+def update_member_xp_level(member, xp, level):
+    userid = str(member.id)
+    try:
+        db_config = read_db_config()
+        conn = MySQLConnection(**db_config)
+        c = conn.cursor()
+        c.execute("""UPDATE user_management SET experience = %s, level = %s WHERE discord_uuid = %s""",
+                  (xp, level, userid))
+        c.close()
+
+    except Error as e:
+        diagnostics.log_error('severe', 'database', 'fetch_member_xp_level() failed to read from db')
+        return e
+
+
+def fetch_member_last_message_time(member):
+    userid = str(member.id)
+    try:
+        db_config = read_db_config()
+        conn = MySQLConnection(**db_config)
+        c = conn.cursor()
+        c.execute("""SELECT last_message_sent_time FROM user_management
+                    WHERE discord_uuid = %s""", (userid,))
+        user_record = c.fetchall()[0]
+        last_message_sent_time = int(user_record['last_message_sent_time'])
+
+        c.close()
+        return last_message_sent_time
+
+    except Error as e:
+        diagnostics.log_error('severe', 'database', 'fetch_member_last_message_time() failed to read from db')
+        return e
+
+
