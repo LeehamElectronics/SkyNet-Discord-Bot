@@ -2,3 +2,5 @@
 /config.yml
 /rules.yml
 /generated_images/
+/conf/
+/src/invites.yml

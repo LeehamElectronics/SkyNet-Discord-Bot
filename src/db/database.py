@@ -1,9 +1,9 @@
 from datetime import datetime
 
-import diagnostics
+import src.diagnostics as diagnostics
 
 from mysql.connector import MySQLConnection, Error
-from python_mysql_dbconfig import read_db_config
+from src.db.python_mysql_dbconfig import read_db_config
 
 
 def create_tables():

@@ -1,7 +1,11 @@
+import os
 from configparser import ConfigParser
 
+path_dir = os.getcwd().replace('\\', '/').replace('src', 'conf')
+mysql_conf_dir = f"{path_dir}/config.ini"
 
-def read_db_config(filename='config.ini', section='mysql'):
+
+def read_db_config(filename=mysql_conf_dir, section='mysql'):
     """ Read database configuration file and return a dictionary object
     :param filename: name of the configuration file
     :param section: section of database configuration

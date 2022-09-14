@@ -1,4 +1,4 @@
-import load_configs
+import src.db.load_configs as load_configs
 
 
 class ConfigFile:

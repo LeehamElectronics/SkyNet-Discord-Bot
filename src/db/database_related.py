@@ -5,7 +5,7 @@ import discord
 import json
 import mysql.connector  # For interacting with the internal MySQL Server
 import urllib.request
-import configuration
+import src.db.configuration as configuration
 
 global_configuration_dict = configuration.ConfigFile.root_conf
 

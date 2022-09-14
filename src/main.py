@@ -36,9 +36,9 @@ import datetime
 import feedparser  # for RSS Feeds!
 
 # These imports are from local .py files:
-import configuration
-import database
-from load_configs import read_rules_into_mem
+import src.db.configuration as configuration
+import src.db.database as database
+from src.db.load_configs import read_rules_into_mem
 
 print("Loading Configuration...")
 global_configuration_dict = configuration.ConfigFile.root_conf  # Load our configuration file into memory
@@ -112,7 +112,8 @@ suggestion_state = ""
 #    General Configuration    #
 ###############################
 server_id = global_configuration_dict['general_info']['guild_id']  # Unique guild ID of the Discord Server.
-rules_yml_location = global_configuration_dict['general_info']['rules_message_path']
+path_dir = os.getcwd().replace('\\', '/').replace('src', 'conf')
+rules_yml_location = f"{path_dir}/rules.yml"
 
 #############################
 #     Discord Role ID's     #

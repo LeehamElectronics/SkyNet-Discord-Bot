@@ -5,9 +5,11 @@ import yaml
 
 def load_main_config():
     print("Loading main configuration file")
-
     # Procedure one is to check if the configuration file exists, it should be in root:
-    if os.path.isfile('config.yml'):
+    path_dir = os.getcwd().replace('\\', '/').replace('src', 'conf')
+    conf_dir = f"{path_dir}/config.yml"
+
+    if os.path.isfile(conf_dir):
         print("configuration file exists")
 
     else:
@@ -134,11 +136,11 @@ def load_main_config():
 
         }
 
-        with open(r'config.yml', 'w') as file:
+        with open(conf_dir, 'w') as file:
             documents = yaml.dump(dict_file, file)
 
     # Now we will read the configuration file into a Python dictionary variable
-    with open(r'config.yml') as file:
+    with open(conf_dir) as file:
         dict_file = yaml.load(file, Loader=yaml.FullLoader)
 
     # Return the dictionary to our main.py file
