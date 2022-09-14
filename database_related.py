@@ -42,29 +42,6 @@ mc_placeholder_db = mysql.connector.connect(
 mc_placeholder_data_cursor = mc_placeholder_db.cursor(buffered=True)  # We will reference this a lot
 
 
-# This function only runs once when the bot initially starts up.
-def read_users_data_into_mem(user_db_path):
-    print("Trying to read all users data from JSON file...")
-    users_list_of_dict = []  # Create the empty list
-    begin_time = datetime.datetime.now()  # So we cna time how long it takes!
-    with open(user_db_path) as f:
-        users_dict_of_dict = json.load(f)
-        for i in users_dict_of_dict:
-            users_list_of_dict.append(users_dict_of_dict[i])
-    print("Finished reading User data")
-    print("Time taken to read user data into memory: " + str(datetime.datetime.now() - begin_time )+
-          "  (hour:minutes:seconds:microseconds)")
-    time_taken = str(datetime.datetime.now() - begin_time)
-    return [users_dict_of_dict, users_list_of_dict, time_taken]
-
-
-# This drops the current user database in memory into the JSON file, don't call this too many times it drains resources
-def write_user_data(users_dict_of_dict, user_db_path):
-    print("Appending all user data into JSON file...")
-    with open(user_db_path, "w") as f:
-        json.dump(users_dict_of_dict, f, indent=4)
-
-
 ########################################################################################################################
 #                                                                                                                      #
 #                          MySQL related functions, mostly related to communicating with MC server                     #

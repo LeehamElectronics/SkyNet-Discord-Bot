@@ -33,5 +33,5 @@ class Events(commands.Cog):
         invites_after_join = await member.guild.invites()
 
 
-def setup(client):
-    client.add_cog(Events(client))
+async def setup(client):
+    await client.add_cog(Events(client))

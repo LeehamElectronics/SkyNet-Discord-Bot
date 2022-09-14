@@ -11,8 +11,6 @@ from check_routines import check_roles
 from messages import member_does_not_have_permision  # Messages are stored here
 from mathmatical_functions import _map, find_members_rank
 from load_configs import share_global_config_dict_elsewhere  # Use this to find role ID's from config.yml
-from main import share_users_dict_of_dict_elsewhere
-from main import import_users_dict_of_dict_db
 from datetime import date
 from datetime import datetime
 
@@ -20,6 +18,7 @@ from datetime import datetime
 class Commands(commands.Cog):
 
     def __init__(self, client):
+        print('TESATTTTTT')
         self.config = share_global_config_dict_elsewhere()
         self.client = client
         self.timings_channel = self.client.get_channel(self.config['discord_channel_ids']
@@ -329,5 +328,5 @@ class Commands(commands.Cog):
             await ctx.send(who_you_have_invited)
 
 
-def setup(client):
-    client.add_cog(Commands(client))
+async def setup(client):
+    await client.add_cog(Commands(client))
