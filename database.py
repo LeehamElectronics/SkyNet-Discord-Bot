@@ -45,7 +45,8 @@ def create_tables():
 
     # edit_message_log table
     c.execute("""create table if not exists edit_message_log(discord_uuid BIGINT NOT NULL, 
-    content BIGINT NOT NULL, 
+    original_content BIGINT NOT NULL, 
+    edited_content BIGINT NOT NULL, 
     message_id BIGINT NOT NULL, 
     link BIGINT NOT NULL, 
     channel BIGINT NOT NULL,
@@ -112,7 +113,7 @@ def increment_member_messages_count(message, msg_type):
         pass
     elif msg_type == "total_message_edits":
         pass
-    elif msg_type == "total_message_deletes"
+    elif msg_type == "total_message_deletes":
         pass
     else:
         logging.log_error('severe', 'functional', 'increment_member_messages_count was fed invalid msg_type')
@@ -121,13 +122,13 @@ def increment_member_messages_count(message, msg_type):
         db_config = read_db_config()
         conn = MySQLConnection(**db_config)
         c = conn.cursor()
-        c.execute("""SELECT total_messages_sent, FROM user_management
-                  WHERE discord_uuid = %s""", (userid,))
+        c.execute("""SELECT %s, FROM user_management
+                  WHERE discord_uuid = %s""", (msg_type, userid))
         user_record = c.fetchall()[0]
         message_count = int(user_record['total_messages_sent']) + 1
 
-        c.execute("""UPDATE user_management SET total_messages_sent = %s WHERE discord_uuid = %s""",
-                  (message_count, userid))
+        c.execute("""UPDATE user_management SET %s = %s WHERE discord_uuid = %s""",
+                  (msg_type, message_count, userid))
         conn.commit()
         c.close()
     except Error as e:
@@ -154,20 +155,21 @@ def insert_send_message_log(message, date):
         return e
 
 
-def insert_edit_message_log(message, date):
-    userid = str(message.author.id)
-    content = str(message.content)
-    message_id = str(message.id)
-    link = str(message.jump_url)
-    channel = str(message.channel.id)
+def insert_edit_message_log(before, after, date):
+    userid = str(after.author.id)
+    edited_content = str(after.content)
+    original_content = str(before.content)
+    message_id = str(after.id)
+    link = str(after.jump_url)
+    channel = str(after.channel.id)
 
     try:
         db_config = read_db_config()
         conn = MySQLConnection(**db_config)
         c = conn.cursor()
         c.execute(
-            "INSERT INTO 'edit_message_log' ('discord_uuid', 'content', 'message_id', 'link', 'channel', 'edit_date') values((%s, %s, %s, %s, %s, %s);",
-            userid, content, message_id, link, channel, date)
+            "INSERT INTO 'edit_message_log' ('discord_uuid', 'original_content', 'edited_content', 'message_id', 'link', 'channel', 'edit_date') values((%s, %s, %s, %s, %s, %s);",
+            userid, original_content, edited_content, message_id, link, channel, date)
         conn.commit()
         c.close()
     except Error as e:

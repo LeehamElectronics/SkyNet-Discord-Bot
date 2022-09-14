@@ -42,10 +42,11 @@ from datetime import date
 import feedparser  # for RSS Feeds!
 
 # These imports are from local .py files:
-from load_configs import share_global_config_dict_elsewhere, read_rules_into_mem
+import configuration
+from load_configs import read_rules_into_mem
 
 print("Loading Configuration...")
-global_configuration_dict = share_global_config_dict_elsewhere()  # Load our configuration file into memory
+global_configuration_dict = configuration.ConfigFile.root_conf  # Load our configuration file into memory
 image_urls = global_configuration_dict['image_links']  # keeps code cleaner when referencing image urls
 
 ##########################################
@@ -183,46 +184,7 @@ jw_news_role_assign_id = str(rr_embed_id_dict['jw_news_role_assign_id'])
 ###############################
 #      General Channels       #
 ###############################
-general_channel_id_dict = global_configuration_dict['discord_channel_ids']['general_channels']  # Get to the root!
-bot_channel_id = general_channel_id_dict['bot_channel_id']
-announcements_channel_id = general_channel_id_dict['announcements_channel_id']
-memes_channel_id = general_channel_id_dict['memes_channel_id']
-bugs_and_suggestions_channel_id = general_channel_id_dict['bugs_and_suggestions_channel_id']
-general_channel_id = general_channel_id_dict['general_channel_id']
-member_log_channel_id = general_channel_id_dict['member_log_channel_id']
-mc_server_updates_channel_id = general_channel_id_dict['mc_server_updates_channel_id']
-voting_channel_id = general_channel_id_dict['voting_channel_id']
-rules_channel_id = general_channel_id_dict['rules_channel_id']
-dev_progress_channel_id = general_channel_id_dict['dev_progress_channel_id']
-theocratic_channel_id = general_channel_id_dict['theocratic_channel_id']
-donation_info_channel_id = general_channel_id_dict['donation_info_channel_id']
-#############################
-#      Misc Channel ID's    #
-#############################
-misc_channel_id_dict = global_configuration_dict['discord_channel_ids']['misc_channel_ids']  # Get to the root!
-online_members_vc_channel_id = misc_channel_id_dict['online_members_vc_channel_id']
-role_assign_channel_id = misc_channel_id_dict['role_assign_channel_id']
-##############################################
-#          Bungee Console Channel ID's       #
-##############################################
-bungee_console_channel_id_dict = global_configuration_dict['discord_channel_ids'][
-    'bungee_network_console_channel_ids']  # Get to the root!
-sky_block_console_channel_id = bungee_console_channel_id_dict['sky_block_console_channel_id']
-creative_console_channel_id = bungee_console_channel_id_dict['creative_console_channel_id']
-survival_console_channel_id = bungee_console_channel_id_dict['survival_console_channel_id']
-minigames_console_channel_id = bungee_console_channel_id_dict['minigames_console_channel_id']
-lobby_console_channel_id = bungee_console_channel_id_dict['lobby_console_channel_id']
-##############################################
-#           Administration Channel ID's      #
-##############################################
-administration_channel_id_dict = global_configuration_dict['discord_channel_ids'][
-    'admin_channel_ids']  # Get to the root!
-all_message_log_channel_id = administration_channel_id_dict['all_message_log_channel_id']
-to_do_list_channel_id = administration_channel_id_dict['to_do_list_channel_id']
-admin_member_join_logger_channel_id = administration_channel_id_dict['admin_member_join_logger_channel_id']
-discord_timing_channel_id = administration_channel_id_dict['discord_timing_channel_id']
-mod_log_channel_id = administration_channel_id_dict['mod_log']
-dm_log_channel_id = administration_channel_id_dict['dm_log']
+
 
 
 ######################################################
@@ -329,30 +291,30 @@ async def on_ready():
     jw_news_sub = get(guild.roles, id=jw_news_sub_id)
 
     # Channel Deceleration #
-    bot_channel = client.get_channel(bot_channel_id)  # Channel for bot-spam
-    announcements_channel = client.get_channel(announcements_channel_id)
-    general_channel = client.get_channel(general_channel_id)
-    member_log_channel = client.get_channel(member_log_channel_id)
-    all_message_log_channel = client.get_channel(all_message_log_channel_id)
-    memes_channel = client.get_channel(memes_channel_id)
-    role_assign_channel = client.get_channel(role_assign_channel_id)
-    mc_server_updates_channel = client.get_channel(mc_server_updates_channel_id)
-    bugs_and_suggestions_channel = client.get_channel(bugs_and_suggestions_channel_id)
-    voting_channel = client.get_channel(voting_channel_id)
-    to_do_list_channel = client.get_channel(to_do_list_channel_id)
-    sky_block_console_channel = client.get_channel(sky_block_console_channel_id)
-    lobby_console_channel = client.get_channel(lobby_console_channel_id)
-    minigames_console_channel = client.get_channel(minigames_console_channel_id)
-    survival_console_channel = client.get_channel(survival_console_channel_id)
-    creative_console_channel = client.get_channel(creative_console_channel_id)
-    rules_channel = client.get_channel(rules_channel_id)
-    admin_member_join_logger_channel = client.get_channel(admin_member_join_logger_channel_id)
-    discord_timing_channel = client.get_channel(discord_timing_channel_id)
-    dm_log_channel = client.get_channel(dm_log_channel_id)
-    dev_progress_channel = client.get_channel(dev_progress_channel_id)
-    online_members_vc_channel = client.get_channel(online_members_vc_channel_id)
-    theocratic_channel = client.get_channel(theocratic_channel_id)
-    donation_info_channel = client.get_channel(donation_info_channel_id)
+    bot_channel = client.get_channel(configuration.ChannelObjects.bot_channel_id)  # Channel for bot-spam
+    announcements_channel = client.get_channel(configuration.ChannelObjects.announcements_channel_id)
+    general_channel = client.get_channel(configuration.ChannelObjects.general_channel_id)
+    member_log_channel = client.get_channel(configuration.ChannelObjects.member_log_channel_id)
+    all_message_log_channel = client.get_channel(configuration.ChannelObjects.all_message_log_channel_id)
+    memes_channel = client.get_channel(configuration.ChannelObjects.memes_channel_id)
+    role_assign_channel = client.get_channel(configuration.ChannelObjects.role_assign_channel_id)
+    mc_server_updates_channel = client.get_channel(configuration.ChannelObjects.mc_server_updates_channel_id)
+    bugs_and_suggestions_channel = client.get_channel(configuration.ChannelObjects.bugs_and_suggestions_channel_id)
+    voting_channel = client.get_channel(configuration.ChannelObjects.voting_channel_id)
+    to_do_list_channel = client.get_channel(configuration.ChannelObjects.to_do_list_channel_id)
+    sky_block_console_channel = client.get_channel(configuration.ChannelObjects.sky_block_console_channel_id)
+    lobby_console_channel = client.get_channel(configuration.ChannelObjects.lobby_console_channel_id)
+    minigames_console_channel = client.get_channel(configuration.ChannelObjects.minigames_console_channel_id)
+    survival_console_channel = client.get_channel(configuration.ChannelObjects.survival_console_channel_id)
+    creative_console_channel = client.get_channel(configuration.ChannelObjects.creative_console_channel_id)
+    rules_channel = client.get_channel(configuration.ChannelObjects.rules_channel_id)
+    admin_member_join_logger_channel = client.get_channel(configuration.ChannelObjects.admin_member_join_logger_channel_id)
+    discord_timing_channel = client.get_channel(configuration.ChannelObjects.discord_timing_channel_id)
+    dm_log_channel = client.get_channel(configuration.ChannelObjects.dm_log_channel_id)
+    dev_progress_channel = client.get_channel(configuration.ChannelObjects.dev_progress_channel_id)
+    online_members_vc_channel = client.get_channel(configuration.ChannelObjects.online_members_vc_channel_id)
+    theocratic_channel = client.get_channel(configuration.ChannelObjects.theocratic_channel_id)
+    donation_info_channel = client.get_channel(configuration.ChannelObjects.donation_info_channel_id)
 
     # send a restart notification embed:
     await load_cogs()
@@ -774,22 +736,6 @@ async def send_suggestion_feedback(reason):
         await bugs_and_suggestions_channel.send(embed=suggestion_removed_embed)
         await to_do_list_channel.send(embed=vote_message_embed.embeds[0])
         await vote_message_embed.delete()
-
-
-async def send_help(message):  # Asks if member needs help in channel...
-    print("Sending Help...")
-    embed = discord.Embed(
-        title="Need Help?",
-        # description="or use !help",
-        color=discord.Colour.orange()
-    )
-    embed.add_field(name="React with 👍 for help", value="** **", inline=False)
-    # embed.add_field(name="React with 👎 to go away", value="** **", inline=False)
-    # embed.set_footer(text='')
-    # embed.set_author(name="")
-    return_msg = await message.channel.send(embed=embed)
-    await return_msg.add_reaction(emoji='👍')
-    await return_msg.add_reaction(emoji='👎')
 
 
 async def send_restart_notification():

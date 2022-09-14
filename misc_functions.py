@@ -9,9 +9,10 @@ import asyncio  # For running asynchronous code...
 import datetime
 import os
 import re  # For removing all non integers form a string, this is for converting @mentions into user ID
+
+import configuration
 from check_routines import check_roles
 from discord_embed_generators import gen_punishment_embed_mod_log_embed, gen_unban_embed
-from load_configs import share_global_config_dict_elsewhere  # Use this to find role ID's from config.yml
 from mathmatical_functions import _map
 import requests
 from messages import member_does_not_have_permision  # Messages are stored here
@@ -35,9 +36,24 @@ from PIL import ImageDraw
 #       Global Variables Here       #
 #                                   #
 #####################################
-config = share_global_config_dict_elsewhere()
+config = configuration.ConfigFile.root_conf
 admin_role_id = config['discord_role_ids']['general_roles']['admin']
 server_id = config['general_info']['guild_id']
+
+
+async def send_need_help_prompt(message):  # Asks if member needs help in channel...
+    embed = discord.Embed(
+        title="Need Help?",
+        # description="or use !help",
+        color=discord.Colour.orange()
+    )
+    embed.add_field(name="React with 👍 for help", value="** **", inline=False)
+    # embed.add_field(name="React with 👎 to go away", value="** **", inline=False)
+    # embed.set_footer(text='')
+    # embed.set_author(name="")
+    return_msg = await message.channel.send(embed=embed)
+    await return_msg.add_reaction(emoji='👍')
+    await return_msg.add_reaction(emoji='👎')
 
 
 # This function converts a user mention string into a user object

@@ -145,16 +145,11 @@ def load_main_config():
     return dict_file
 
 
-global_configuration_dict = load_main_config()
-
-
-def share_global_config_dict_elsewhere():  # This is called in other .py files to get the latest user db
-    return global_configuration_dict
-
-
 def read_rules_into_mem(path):
     with open(path) as file:
         # The FullLoader parameter handles the conversion from YAML
         # scalar values to Python the dictionary format
         list_file = yaml.load(file, Loader=yaml.FullLoader)
         return list_file
+
+
