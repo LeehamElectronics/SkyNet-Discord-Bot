@@ -4,18 +4,21 @@ import asyncio
 import discord
 from discord import app_commands
 from discord.ext import commands
+from discord import Interaction
+from discord.app_commands import AppCommandError
 
 
 class CogLoader(commands.Cog):
     # ----- __init__ function runs on reload ----- #
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
+        bot.tree.on_error = on_app_command_error
 
-    # ----- on_ready function runs on startup ----- #
     @commands.Cog.listener()
     async def on_ready(self):
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
+    @app_commands.checks.has_any_role('Owner', 'Admin')
     @app_commands.command(name="reload", description="Reload all/one of the bots cogs")
     async def reload_cogs(self, interaction: discord.Interaction, cog: str) -> None:
         """ /command-reload """
@@ -51,7 +54,7 @@ class CogLoader(commands.Cog):
                                 inline=False
                             )
                     await asyncio.sleep(0.5)
-            await interaction.response.send_message(embed=embed)
+            await interaction.response.send_message(embed=embed, ephemeral=True)
         else:
             # reload the specific cog
             print("Reloading specific cog")
@@ -92,7 +95,7 @@ class CogLoader(commands.Cog):
                             value=e,
                             inline=False
                         )
-            await interaction.response.send_message(embed=embed)
+            await interaction.response.send_message(embed=embed, ephemeral=True)
 
     @reload_cogs.autocomplete('cog')
     async def reload_cogs_autocomplete(self, interaction: discord.Interaction, current: str
@@ -102,6 +105,12 @@ class CogLoader(commands.Cog):
             app_commands.Choice(name=cog, value=cog)
             for cog in cogs if current.lower() in cog.lower()
         ]
+
+
+# error handler
+async def on_app_command_error(interaction: Interaction, error: AppCommandError):
+    print(error)
+    await interaction.response.send_message('no', ephemeral=True)
 
 
 async def setup(bot: commands.Bot) -> None:
