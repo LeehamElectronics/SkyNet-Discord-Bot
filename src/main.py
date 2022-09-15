@@ -24,6 +24,7 @@
 ###################################
 # Discord related API packages #
 import discord
+from discord import app_commands
 from discord.ext import commands
 from discord.utils import get
 from discord.ext import tasks  # For scheduling repeated function calls such as timers.
@@ -50,10 +51,9 @@ image_urls = global_configuration_dict['image_links']  # keeps code cleaner when
 intents = discord.Intents.all()
 intents.message_content = True
 intents.members = True
-client = commands.Bot(command_prefix='!', intents=intents, case_insensitive=True)
 
-# help command does not work without this statement... idk why
-client.remove_command("help")
+client = commands.Bot(command_prefix='!', intents=intents, case_insensitive=True)
+tree = client.tree
 
 ####################
 #  Misc variables  #
@@ -373,6 +373,22 @@ async def update_online_members_vc_placeholder():
 #                                                       #
 #########################################################
 
+@client.command()
+@commands.guild_only()
+@commands.is_owner()
+async def sync_tree(ctx):
+    print("syncing tree")
+    members_roles = ctx.message.author.roles
+    if admin_role in members_roles:
+        client.tree.copy_global_to(guild=guild)
+        await ctx.bot.tree.sync(guild=ctx.guild)
+        await ctx.send(
+            f"Synced bot commands"
+        )
+    else:
+        await ctx.message.channel.send("Oh, so you're am Admin r u??")
+
+
 @client.command()  # Make a suggestion
 async def auto_check_all_roles(ctx):
     print("Check all member roles command executing")
@@ -506,7 +522,7 @@ async def send_role_embed(ctx):
                                           icon_url="https://i.imgur.com/BQLKiEh.png")
         skynetlab_assign_embed.add_field(name="Gives you access to SkyNet LAB channels!", value="** **", inline=False)
         skynetlab_assign_embed_ref = await role_assign_channel.send(embed=skynetlab_assign_embed)
-        await skynetlab_assign_embed_ref.add_reaction(emoji='🧪')
+        await skynetlab_assign_embed_ref.add_reaction('🧪')
 
         skynetlab_assign_embed = discord.Embed(
             title="WatchTower Notifications",
@@ -521,7 +537,7 @@ async def send_role_embed(ctx):
         skynetlab_assign_embed.add_field(name="Get pinged every Friday as a reminder for WT Study!", value="** **",
                                          inline=False)
         skynetlab_assign_embed_ref = await role_assign_channel.send(embed=skynetlab_assign_embed)
-        await skynetlab_assign_embed_ref.add_reaction(emoji='📖')
+        await skynetlab_assign_embed_ref.add_reaction('📖')
 
         general_mc_updates_msg = '{0.mention}'.format(announcements_channel)
         skynetlab_assign_embed = discord.Embed(
@@ -549,11 +565,11 @@ async def send_role_embed(ctx):
                                          value='{0.mention}'.format(mc_server_updates_channel),
                                          inline=False)
         skynetlab_assign_embed_ref = await role_assign_channel.send(embed=skynetlab_assign_embed)
-        await skynetlab_assign_embed_ref.add_reaction(emoji='🕹')
-        await skynetlab_assign_embed_ref.add_reaction(emoji='🎉')
-        await skynetlab_assign_embed_ref.add_reaction(emoji=bw_emoji)
-        await skynetlab_assign_embed_ref.add_reaction(emoji=tw_emoji)
-        await skynetlab_assign_embed_ref.add_reaction(emoji=ma_emoji)
+        await skynetlab_assign_embed_ref.add_reaction('🕹')
+        await skynetlab_assign_embed_ref.add_reaction('🎉')
+        await skynetlab_assign_embed_ref.add_reaction(bw_emoji)
+        await skynetlab_assign_embed_ref.add_reaction(tw_emoji)
+        await skynetlab_assign_embed_ref.add_reaction(ma_emoji)
 
         tech_channel = client.get_channel(784976527447293962)
         msg = '{0.mention}'.format(tech_channel)
@@ -575,11 +591,11 @@ async def send_role_embed(ctx):
         javascript_emoji = get(client.emojis, name='javascript')
         java_emoji = get(client.emojis, name='java')
         cplusplus_emoji = get(client.emojis, name='cplusplus')
-        await skynetlab_assign_embed_ref.add_reaction(emoji=python_emoji)
-        await skynetlab_assign_embed_ref.add_reaction(emoji=javascript_emoji)
-        await skynetlab_assign_embed_ref.add_reaction(emoji=java_emoji)
-        await skynetlab_assign_embed_ref.add_reaction(emoji=cplusplus_emoji)
-        await skynetlab_assign_embed_ref.add_reaction(emoji=my_sql_emoji)
+        await skynetlab_assign_embed_ref.add_reaction(python_emoji)
+        await skynetlab_assign_embed_ref.add_reaction(javascript_emoji)
+        await skynetlab_assign_embed_ref.add_reaction(java_emoji)
+        await skynetlab_assign_embed_ref.add_reaction(cplusplus_emoji)
+        await skynetlab_assign_embed_ref.add_reaction(my_sql_emoji)
 
         # Delete command to make life easier 4 me:
         await ctx.message.delete()
