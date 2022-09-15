@@ -24,7 +24,7 @@ class CogLoader(commands.Cog):
         """ /command-reload """
         if not cog:
             # No cog, means we reload all cogs
-            print("Reloading all cogs")11
+            print("Reloading all cogs")
             embed = discord.Embed(
                 title="Reloading all cogs!",
                 color=0x808080
