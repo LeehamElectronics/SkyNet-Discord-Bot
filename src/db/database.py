@@ -236,7 +236,8 @@ def insert_deleted_message_log(message, date):
         conn = MySQLConnection(**db_config)
         c = conn.cursor(dictionary=True)
         c.execute(
-            "INSERT INTO delete_message_log ('discord_uuid', 'content', 'message_id', 'link', 'channel', 'deletion_date') values((%s, %s, %s, %s, %s, %s);",
+            """ INSERT INTO delete_message_log(discord_uuid, content, message_id, link, channel, deletion_date)\
+            VALUES (%s, %s, %s, %s, %s, %s)""",
             (userid, content, message_id, link, channel, date))
         conn.commit()
         c.close()
