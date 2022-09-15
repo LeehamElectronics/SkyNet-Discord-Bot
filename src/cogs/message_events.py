@@ -131,7 +131,7 @@ class MessageEvents(commands.Cog):
             if message.attachments or "https://" in message.content or "http://" in message.content:
                 await message.add_reaction('👍')
                 await message.add_reaction(alright_emoji)
-                await message.add_reaction('👎')
+                await message.add_reaction('👎') #test
 
         # Here we check for a bunch of predefined messages: TODO: move all checks into another file
         if content_lowered == "no u":
