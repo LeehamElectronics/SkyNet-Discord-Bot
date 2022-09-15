@@ -115,7 +115,8 @@ def insert_join_log(discord_uuid, inviter_uuid, date):
         conn = MySQLConnection(**db_config)
         c = conn.cursor(dictionary=True)
         c.execute(
-            "INSERT INTO join_log ('discord_uuid', 'inviter_uuid', 'date') values((%s, %s);",
+            """ INSERT INTO join_log(discord_uuid, inviter_uuid, date)\
+             values(%s, %s, %s)""",
             (discord_uuid, inviter_uuid, date))
         conn.commit()
         c.close()
@@ -130,7 +131,8 @@ def insert_leave_log(discord_uuid, date):
         conn = MySQLConnection(**db_config)
         c = conn.cursor(dictionary=True)
         c.execute(
-            "INSERT INTO leave_log ('discord_uuid', 'date') values((%s, %s);",
+            "INSERT INTO leave_log(discord_uuid, date)\
+             values(%s, %s);",
             (discord_uuid, date))
         conn.commit()
         c.close()
