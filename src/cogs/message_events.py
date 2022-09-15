@@ -129,9 +129,9 @@ class MessageEvents(commands.Cog):
         alright_emoji = get(self.client.emojis, name='alright')
         if message.channel.id == configuration.ChannelObjects.memes_channel_id:
             if message.attachments or "https://" in message.content or "http://" in message.content:
-                await message.add_reaction(emoji='👍')
-                await message.add_reaction(emoji=alright_emoji)
-                await message.add_reaction(emoji='👎')
+                await message.add_reaction('👍')
+                await message.add_reaction(alright_emoji)
+                await message.add_reaction('👎')
 
         # Here we check for a bunch of predefined messages: TODO: move all checks into another file
         if content_lowered == "no u":
