@@ -131,7 +131,8 @@ def load_main_config():
             'image_links': {
                 "skynet_s_logo": "https://i.imgur.com/abc.png",
                 "icon_url_orange_play_button": "https://i.imgur.com/abc.png",
-                "crying_emoji": "https://i.imgur.com/abc.png"
+                "crying_emoji": "https://i.imgur.com/abc.png",
+                "skynet_s_logo_broken": "https://i.imgur.com/abc.png"
             },
 
         }
