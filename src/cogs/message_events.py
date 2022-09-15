@@ -4,6 +4,8 @@
 import datetime
 import random
 
+from profanity_check import predict, predict_prob
+
 import discord
 from discord.ext import commands
 from discord.utils import get
@@ -19,14 +21,17 @@ class MessageEvents(commands.Cog):
         self.client = client
 
         # channel objects:
-        self.dm_log_channel = self.client.get_channel(configuration.ChannelObjects.dm_log_channel_id)
-        self.admin_member_join_logger_channel = self.client.get_channel(configuration.ChannelObjects.admin_member_join_logger_channel_id)
-        self.all_message_log_channel = self.client.get_channel(configuration.ChannelObjects.all_message_log_channel_id)
         self.rules_channel = self.client.get_channel(configuration.ChannelObjects.rules_channel_id)
         self.bot_channel = self.client.get_channel(configuration.ChannelObjects.bot_channel_id)
         self.role_assign_channel = self.client.get_channel(configuration.ChannelObjects.role_assign_channel_id)
         self.dev_progress_channel = self.client.get_channel(configuration.ChannelObjects.dev_progress_channel_id)
+        # logger channels:
+        self.rule_breaker_log_channel = self.client.get_channel(configuration.ChannelObjects.rule_breaker_log_channel_id)
         self.error_log_channel = self.client.get_channel(configuration.ChannelObjects.discord_timing_channel_id)
+        self.dm_log_channel = self.client.get_channel(configuration.ChannelObjects.dm_log_channel_id)
+        self.admin_member_join_logger_channel = self.client.get_channel(
+            configuration.ChannelObjects.admin_member_join_logger_channel_id)
+        self.all_message_log_channel = self.client.get_channel(configuration.ChannelObjects.all_message_log_channel_id)
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -82,6 +87,25 @@ class MessageEvents(commands.Cog):
             await self.error_log_channel.send(embed=errors)
             return
 
+        if content == "":
+            content = "deleted-content"
+        # check for inappropriate language
+        inappropriate_probability = predict_prob([content])
+        embed = discord.Embed(
+            title=str(author),
+            description=channel_of_message,
+            color=discord.Colour.orange())
+        embed.set_footer(text=str(now.strftime('%H:%M:%S on %A, %B the %dth, %Y') + f': probval={inappropriate_probability}'))
+        embed.set_thumbnail(url=author.display_avatar.url)  # https://i.imgur.com/Iw4o4JF.png"
+        embed.set_author(name=author, icon_url="https://i.imgur.com/Iw4o4JF.png")
+        embed.add_field(name="inappropriate Message", value=content.replace('@', 'AT'))
+
+        await self.all_message_log_channel.send(embed=embed)
+
+        if inappropriate_probability > .75:
+            await message.delete()
+            await self.rule_breaker_log_channel.send(embed=embed)
+
         # levelling and statistics code
         added_exp = random.randint(1, 8)  # Generate random XP value...
         errors, return_data = database.fetch_member_last_message_time(author)
@@ -122,9 +146,6 @@ class MessageEvents(commands.Cog):
             embed.add_field(name="Message", value=content.replace('@', 'AT'))
             await self.all_message_log_channel.send(embed=embed)
 
-        # Process the message, not sure why, possibly for cogs??
-        await self.client.process_commands(message)
-
         # Check if message was sent into memes channel:
         alright_emoji = get(self.client.emojis, name='alright')
         if message.channel.id == configuration.ChannelObjects.memes_channel_id:
@@ -156,6 +177,9 @@ class MessageEvents(commands.Cog):
             await send_need_help_prompt(message)
         elif "help me" in content_lowered:
             await send_need_help_prompt(message)
+
+        # process message for commands
+        await self.client.process_commands(message)
 
     @commands.Cog.listener()
     async def on_message_delete(self, message):

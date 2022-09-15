@@ -46,3 +46,7 @@ class ChannelObjects:
     discord_timing_channel_id = administration_channel_id_dict['discord_timing_channel_id']
     mod_log_channel_id = administration_channel_id_dict['mod_log']
     dm_log_channel_id = administration_channel_id_dict['dm_log']
+    # log channels
+    log_channel_id_dict = ConfigFile.root_conf['discord_channel_ids'][
+        'log_channels']
+    rule_breaker_log_channel_id = log_channel_id_dict['rule_breaker_log']
