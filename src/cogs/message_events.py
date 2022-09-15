@@ -39,10 +39,9 @@ class MessageEvents(commands.Cog):
         if before.author.bot:
             return
 
-        database.insert_edit_message_log(before, after, now)
+        database.insert_edit_message_log(before, after, after.edited_at)
         database.increment_member_messages_count(after, 'total_message_edits')
 
-        now = datetime.datetime.now()
         embed = discord.Embed(
             title=str(after.author),
             description=str(after.channel),
@@ -71,7 +70,7 @@ class MessageEvents(commands.Cog):
                 await message.add_reaction(emoji='👎')
             return
 
-        database.insert_send_message_log(message, now)
+        database.insert_send_message_log(message, message.created_at)
         added_exp = random.randint(1, 8)  # Generate random XP value...
         levelling.try_to_add_add_experience(author, added_exp)
         database.increment_member_messages_count(message, 'total_messages_sent')

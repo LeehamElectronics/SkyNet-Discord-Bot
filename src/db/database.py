@@ -161,7 +161,7 @@ def increment_member_messages_count(message, msg_type):
         c.execute(query, (userid, ))
 
         user_record = c.fetchall()[0]
-        message_count = int(user_record['total_messages_sent']) + 1
+        message_count = int(user_record[msg_type]) + 1
 
         c.execute(f"""UPDATE user_management SET {msg_type} = %s, last_message_sent_time = %s WHERE discord_uuid = %s""",
                   (message_count, datetime.now(), userid))
@@ -214,7 +214,8 @@ def insert_edit_message_log(before, after, date):
         conn = MySQLConnection(**db_config)
         c = conn.cursor(dictionary=True)
         c.execute(
-            "INSERT INTO edit_message_log ('discord_uuid', 'original_content', 'edited_content', 'message_id', 'link', 'channel', 'edit_date') values((%s, %s, %s, %s, %s, %s);",
+            """ INSERT INTO edit_message_log(discord_uuid, original_content, edited_content, message_id, link, channel, edit_date)\
+             VALUES (%s, %s, %s, %s, %s, %s, %s)""",
             (userid, original_content, edited_content, message_id, link, channel, date))
         conn.commit()
         c.close()

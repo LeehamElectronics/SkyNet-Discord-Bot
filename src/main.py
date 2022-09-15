@@ -328,8 +328,6 @@ async def check_jw_rss_feed():
 @tasks.loop(minutes=3)  # This function cycles the bots status automatically!
 async def cycle_bot_status():
     global cycling_status_list
-    # activity = discord.Game(name="SkyNet MC")
-    # await client.change_presence(status=discord.Status.idle, activity=activity)
     if cycling_status_list >= 4:
         cycling_status_list = 0
         await client.change_presence(status=discord.Status.online, activity=discord.Game(name="SkyNet Servers"))
@@ -355,7 +353,7 @@ async def cycle_bot_status():
         cycling_status_list += 1
 
 
-@tasks.loop(seconds=90)  # This function updates the online members placeholder voice channel
+@tasks.loop(seconds=120)  # This function updates the online members placeholder voice channel
 async def update_online_members_vc_placeholder():
     global is_startup_routine
     if is_startup_routine:  # Changing a channels name on startup may result in api spamming, hence getting blocked ):
