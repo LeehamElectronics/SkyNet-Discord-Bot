@@ -89,11 +89,25 @@ class MessageEvents(commands.Cog):
 
         if content == "":
             content = "deleted-content"
+
+        # Check if message was sent in DM:
+        if isinstance(message.channel, discord.abc.PrivateChannel):
+            embed = discord.Embed(
+                title=str(author),
+                description="Private DM",
+                color=discord.Colour.orange())
+            embed.set_footer(text=str(now.strftime('%H:%M:%S on %A, %B the %dth, %Y')))
+            embed.set_thumbnail(url=author.display_avatar.url)  # https://i.imgur.com/Iw4o4JF.png"
+            embed.set_author(name=author, icon_url="https://i.imgur.com/Iw4o4JF.png")
+            embed.add_field(name="Message", value=content.replace('@', 'AT'))
+            await self.dm_log_channel.send(embed=embed)
+            return
+
         # check for inappropriate language
         inappropriate_probability = predict_prob([content])
         embed = discord.Embed(
-            title=str(author),
-            description=channel_of_message,
+            title=str(author.display_name),
+            description=f'{channel_of_message.mention}',
             color=discord.Colour.orange())
         embed.set_footer(text=str(now.strftime('%H:%M:%S on %A, %B the %dth, %Y') + f': probval={inappropriate_probability}'))
         embed.set_thumbnail(url=author.display_avatar.url)  # https://i.imgur.com/Iw4o4JF.png"
@@ -122,29 +136,6 @@ class MessageEvents(commands.Cog):
 
         # attempt to level up user
         await levelling.manual_level_up(author, channel_of_message)
-
-        # Check if message was sent in DM:
-        if isinstance(message.channel, discord.abc.PrivateChannel):
-            embed = discord.Embed(
-                title=str(author),
-                description="Private DM",
-                color=discord.Colour.orange())
-            embed.set_footer(text=str(now.strftime('%H:%M:%S on %A, %B the %dth, %Y')))
-            embed.set_thumbnail(url=author.display_avatar.url)  # https://i.imgur.com/Iw4o4JF.png"
-            embed.set_author(name=author, icon_url="https://i.imgur.com/Iw4o4JF.png")
-            embed.add_field(name="Message", value=content.replace('@', 'AT'))
-            await self.dm_log_channel.send(embed=embed)
-            return
-        else:
-            embed = discord.Embed(
-                title=str(author),
-                description=channel_of_message,
-                color=discord.Colour.orange())
-            embed.set_footer(text=str(now.strftime('%H:%M:%S on %A, %B the %dth, %Y')))
-            embed.set_thumbnail(url=author.display_avatar.url)  # https://i.imgur.com/Iw4o4JF.png"
-            embed.set_author(name=author, icon_url="https://i.imgur.com/Iw4o4JF.png")
-            embed.add_field(name="Message", value=content.replace('@', 'AT'))
-            await self.all_message_log_channel.send(embed=embed)
 
         # Check if message was sent into memes channel:
         alright_emoji = get(self.client.emojis, name='alright')
