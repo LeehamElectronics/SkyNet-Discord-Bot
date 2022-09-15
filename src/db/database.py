@@ -296,7 +296,7 @@ def fetch_member_last_message_time(member):
                     WHERE discord_uuid = %s""", (userid,))
         user_record = c.fetchall()[0]
         last_message_sent_time = user_record['last_message_sent_time']
-        last_message_sent_time_obj = None
+        last_message_sent_time_obj = datetime.now()
         if last_message_sent_time is not None:
             # convert to datetime object:
             last_message_sent_time_obj = last_message_sent_time
