@@ -73,8 +73,8 @@ class MessageEvents(commands.Cog):
         if message.author.bot:
             if message.channel == self.dev_progress_channel:
                 # Webhook message was sent into dev_progress_channel, adding reactions
-                await message.add_reaction(emoji='👍')
-                await message.add_reaction(emoji='👎')
+                await message.add_reaction('👍')
+                await message.add_reaction('👎')
             return
 
         errors, return_data = database.insert_send_message_log(message, message.created_at)
