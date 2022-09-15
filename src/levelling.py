@@ -12,7 +12,7 @@ async def manual_level_up(user, channel):
 
     new_level = original_level
     while not user_finished_leveling_up:
-        xp_needed = new_level ** 4
+        xp_needed = (new_level ** 4) + 20
         if original_experience > xp_needed:
             # user has levelled up, keep checking to see if they levelled up multiple times.
             new_level += 1
@@ -49,7 +49,7 @@ def try_to_level_up_member(user):  # Used to check if player can level up
     if errors is not None:
         return errors
 
-    xp_needed = original_level ** 4
+    xp_needed = (original_level ** 4) + 20
     if original_experience > xp_needed:
         database.update_member_xp_level(user, original_experience, original_level + 1)
         return True

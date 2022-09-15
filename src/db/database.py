@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 
 import src.diagnostics as diagnostics
@@ -27,6 +28,7 @@ def create_tables():
         first_server_join DATETIME, 
         full_name VARCHAR(150), 
         nick VARCHAR(150), 
+        roles LONGBLOB,
         profile_picture_history LONGBLOB)""")
 
         # join_log table
@@ -107,6 +109,23 @@ def insert_user(user):
         return None, None
     except Error as e:
         return  diagnostics.log_error('severe', 'database', 'insert_user() failed to write to db', e), None
+
+
+def update_user_roles(member, role_ids):
+    role_ids_dict = {'roles': role_ids}
+    confirm_user_exists_in_db(member)
+    try:
+        db_config = read_db_config()
+        conn = MySQLConnection(**db_config)
+        c = conn.cursor(dictionary=True)
+        c.execute("""UPDATE user_management SET roles = %s WHERE discord_uuid = %s""",
+                  (json.dumps(role_ids_dict), member.id))
+        conn.commit()
+        c.close()
+        return None, None
+
+    except Error as e:
+        return diagnostics.log_error('severe', 'database', 'update_user_roles() failed to update db', e), None
 
 
 def insert_join_log(discord_uuid, inviter_uuid, date):

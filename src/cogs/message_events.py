@@ -170,7 +170,7 @@ class MessageEvents(commands.Cog):
             await send_need_help_prompt(message)
 
         # process message for commands
-        await self.client.process_commands(message)
+        # await self.client.process_commands(message)
 
     @commands.Cog.listener()
     async def on_message_delete(self, message):
