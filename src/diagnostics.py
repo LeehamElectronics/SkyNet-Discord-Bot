@@ -1,8 +1,8 @@
 import datetime
-
-# logging level:
 import discord
+import src.db.configuration as configuration
 
+image_links = configuration.ConfigFile.root_conf['image_links']
 logging_level = 1
 
 
@@ -18,7 +18,7 @@ class LoggingColors:
     UNDERLINE = '\033[4m'
 
 
-async def log_error(severity, error_type, message, trace_message):
+def log_error(severity, error_type, message, trace_message):
     # severity is a string such as 'severe' or 'minor'
     # error_type can be 'functional' or 'database'
     # message is a custom string describing the error
@@ -32,10 +32,10 @@ async def log_error(severity, error_type, message, trace_message):
         # send error into Discord channel:
         embed = discord.Embed(
             title=f'ERROR LOG ({severity})',
-            description=f'{error_type}',
+            description=f'{error_type}: {message}',
             color=discord.Colour.red())
         embed.set_footer(text=now)
-        embed.set_thumbnail(url=author.display_avatar.url)  # https://i.imgur.com/Iw4o4JF.png"
-        embed.set_author(name=author, icon_url="https://i.imgur.com/Iw4o4JF.png")
+        embed.set_thumbnail(url=image_links['skynet_s_logo_broken'])  # https://i.imgur.com/Iw4o4JF.png"
+        embed.set_author(name='Skynet Logging', icon_url=image_links['skynet_s_logo_broken'])
         embed.add_field(name="Trace", value=f'{trace_message}')
-        await dm_log_channel.send(embed=embed)
+        return embed

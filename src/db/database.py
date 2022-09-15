@@ -65,9 +65,9 @@ def create_tables():
 
         conn.commit()
         c.close()
+        return None, None
     except Error as e:
-        diagnostics.log_error('severe', 'database', 'confirm_user_exists_in_db() failed to read from db', e)
-        return e
+        return diagnostics.log_error('severe', 'database', 'confirm_user_exists_in_db() failed to read from db', e), None
 
 
 def confirm_user_exists_in_db(user):
@@ -83,9 +83,9 @@ def confirm_user_exists_in_db(user):
             insert_user(user)
         conn.commit()
         c.close()
+        return None, None
     except Error as e:
-        diagnostics.log_error('severe', 'database', 'confirm_user_exists_in_db() failed to read from db', e)
-        return e
+        return diagnostics.log_error('severe', 'database', 'confirm_user_exists_in_db() failed to read from db', e), None
 
 
 def insert_user(user):
@@ -104,9 +104,9 @@ def insert_user(user):
 
         conn.commit()
         c.close()
+        return None, None
     except Error as e:
-        diagnostics.log_error('severe', 'database', 'insert_user() failed to write to db', e)
-        return e
+        return  diagnostics.log_error('severe', 'database', 'insert_user() failed to write to db', e), None
 
 
 def insert_join_log(discord_uuid, inviter_uuid, date):
@@ -119,9 +119,9 @@ def insert_join_log(discord_uuid, inviter_uuid, date):
             (discord_uuid, inviter_uuid, date))
         conn.commit()
         c.close()
+        return None, None
     except Error as e:
-        diagnostics.log_error('severe', 'database', 'insert_join_log() failed to write to db', e)
-        return e
+        return diagnostics.log_error('severe', 'database', 'insert_join_log() failed to write to db', e), None
 
 
 def insert_leave_log(discord_uuid, date):
@@ -134,9 +134,9 @@ def insert_leave_log(discord_uuid, date):
             (discord_uuid, date))
         conn.commit()
         c.close()
+        return None, None
     except Error as e:
-        diagnostics.log_error('severe', 'database', 'insert_leave_log() failed to write to db', e)
-        return e
+        return diagnostics.log_error('severe', 'database', 'insert_leave_log() failed to write to db', e), None
 
 
 def increment_member_messages_count(message, msg_type):
@@ -150,8 +150,7 @@ def increment_member_messages_count(message, msg_type):
     elif msg_type == "total_message_deletes":
         pass
     else:
-        diagnostics.log_error('severe', 'functional', 'increment_member_messages_count was fed invalid msg_type', 'Null')
-        return
+        return diagnostics.log_error('severe', 'functional', 'increment_member_messages_count was fed invalid msg_type', 'Null'), None
     try:
         db_config = read_db_config()
         conn = MySQLConnection(**db_config)
@@ -167,9 +166,9 @@ def increment_member_messages_count(message, msg_type):
                   (message_count, datetime.now(), userid))
         conn.commit()
         c.close()
+        return None, None
     except Error as e:
-        diagnostics.log_error('severe', 'database', 'increment_member_messages_count() failed to write to db', e)
-        return e
+        return diagnostics.log_error('severe', 'database', 'increment_member_messages_count() failed to write to db', e), None
 
 
 def insert_send_message_log(message, date):
@@ -195,9 +194,9 @@ def insert_send_message_log(message, date):
 
         conn.commit()
         c.close()
+        return None, None
     except Error as e:
-        diagnostics.log_error('severe', 'database', 'insert_send_message_log() failed to write to db', e)
-        return e
+        return diagnostics.log_error('severe', 'database', 'insert_send_message_log() failed to write to db', e), None
 
 
 def insert_edit_message_log(before, after, date):
@@ -219,9 +218,9 @@ def insert_edit_message_log(before, after, date):
             (userid, original_content, edited_content, message_id, link, channel, date))
         conn.commit()
         c.close()
+        return None, None
     except Error as e:
-        diagnostics.log_error('severe', 'database', 'insert_edit_message_log() failed to write to db', e)
-        return e
+        return diagnostics.log_error('severe', 'database', 'insert_edit_message_log() failed to write to db', e), None
 
 
 def insert_deleted_message_log(message, date):
@@ -241,9 +240,9 @@ def insert_deleted_message_log(message, date):
             (userid, content, message_id, link, channel, date))
         conn.commit()
         c.close()
+        return None, None
     except Error as e:
-        diagnostics.log_error('severe', 'database', 'insert_deleted_message_log() failed to write to db', e)
-        return e
+        return diagnostics.log_error('severe', 'database', 'insert_deleted_message_log() failed to write to db', e), None
 
 
 def fetch_member_xp_level(member):
@@ -260,11 +259,10 @@ def fetch_member_xp_level(member):
         level = int(user_record['level'])
 
         c.close()
-        return xp, level
+        return None, (xp, level)
 
     except Error as e:
-        diagnostics.log_error('severe', 'database', 'fetch_member_xp_level() failed to read from db', e)
-        return e
+        return diagnostics.log_error('severe', 'database', 'fetch_member_xp_level() failed to read from db', e), None
 
 
 def update_member_xp_level(member, xp, level):
@@ -278,10 +276,10 @@ def update_member_xp_level(member, xp, level):
                   (xp, level, userid))
         conn.commit()
         c.close()
+        return None, None
 
     except Error as e:
-        diagnostics.log_error('severe', 'database', 'update_member_xp_level() failed to update db', e)
-        return e
+        return diagnostics.log_error('severe', 'database', 'update_member_xp_level() failed to update db', e), None
 
 
 def fetch_member_last_message_time(member):
@@ -302,10 +300,9 @@ def fetch_member_last_message_time(member):
 
         conn.commit()
         c.close()
-        return last_message_sent_time_obj
+        return None, last_message_sent_time_obj
 
     except Error as e:
-        diagnostics.log_error('severe', 'database', 'fetch_member_last_message_time() failed to read from db', e)
-        return e
+        return diagnostics.log_error('severe', 'database', 'fetch_member_last_message_time() failed to read from db', e), None
 
 

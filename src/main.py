@@ -353,7 +353,7 @@ async def cycle_bot_status():
         cycling_status_list += 1
 
 
-@tasks.loop(seconds=120)  # This function updates the online members placeholder voice channel
+@tasks.loop(seconds=3000)  # This function updates the online members placeholder voice channel
 async def update_online_members_vc_placeholder():
     global is_startup_routine
     if is_startup_routine:  # Changing a channels name on startup may result in api spamming, hence getting blocked ):

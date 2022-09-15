@@ -26,6 +26,7 @@ class MessageEvents(commands.Cog):
         self.bot_channel = self.client.get_channel(configuration.ChannelObjects.bot_channel_id)
         self.role_assign_channel = self.client.get_channel(configuration.ChannelObjects.role_assign_channel_id)
         self.dev_progress_channel = self.client.get_channel(configuration.ChannelObjects.dev_progress_channel_id)
+        self.error_log_channel = self.client.get_channel(configuration.ChannelObjects.discord_timing_channel_id)
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -39,8 +40,14 @@ class MessageEvents(commands.Cog):
         if before.author.bot:
             return
 
-        database.insert_edit_message_log(before, after, after.edited_at)
-        database.increment_member_messages_count(after, 'total_message_edits')
+        errors, return_data = database.insert_edit_message_log(before, after, after.edited_at)
+        if errors is not None:
+            await self.error_log_channel.send(embed=errors)
+            return
+        errors, return_data = database.increment_member_messages_count(after, 'total_message_edits')
+        if errors is not None:
+            await self.error_log_channel.send(embed=errors)
+            return
 
         embed = discord.Embed(
             title=str(after.author),
@@ -70,10 +77,26 @@ class MessageEvents(commands.Cog):
                 await message.add_reaction(emoji='👎')
             return
 
-        database.insert_send_message_log(message, message.created_at)
+        errors, return_data = database.insert_send_message_log(message, message.created_at)
+        if errors is not None:
+            await self.error_log_channel.send(embed=errors)
+            return
+
+        # levelling and statistics code
         added_exp = random.randint(1, 8)  # Generate random XP value...
-        levelling.try_to_add_add_experience(author, added_exp)
-        database.increment_member_messages_count(message, 'total_messages_sent')
+        errors, return_data = database.fetch_member_last_message_time(author)
+        if errors is not None:
+            await self.error_log_channel.send(embed=errors)
+            return
+        levelling.try_to_add_add_experience(author, return_data, added_exp)
+
+        # increase total messages sent & last message sent time statistics
+        errors, return_data = database.increment_member_messages_count(message, 'total_messages_sent')
+        if errors is not None:
+            await self.error_log_channel.send(embed=errors)
+            return
+
+        # attempt to level up user
         await levelling.manual_level_up(author, channel_of_message)
 
         # Check if message was sent in DM:
@@ -137,8 +160,14 @@ class MessageEvents(commands.Cog):
     @commands.Cog.listener()
     async def on_message_delete(self, message):
         now = datetime.datetime.now()
-        database.insert_deleted_message_log(message, now)
-        database.increment_member_messages_count(message, 'total_message_deletes')
+        errors, return_data = database.insert_deleted_message_log(message, now)
+        if errors is not None:
+            await self.error_log_channel.send(embed=errors)
+            return
+        errors, return_data = database.increment_member_messages_count(message, 'total_message_deletes')
+        if errors is not None:
+            await self.error_log_channel.send(embed=errors)
+            return
 
 
 async def setup(client):
