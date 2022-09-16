@@ -18,7 +18,7 @@ class LoggingColors:
     UNDERLINE = '\033[4m'
 
 
-def log_error(severity, error_type, message, trace_message, *args):
+def log_error(severity: str, error_type: str, message: str, trace_message: str, *args):
     # severity is a string such as 'severe' or 'minor'
     # error_type can be 'functional' or 'database'
     # message is a custom string describing the error

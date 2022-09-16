@@ -423,7 +423,6 @@ async def post_rules(ctx):
 
 @client.command(pass_context=True)  # Make a suggestion
 async def suggest(ctx, *sugg):
-    print("Suggestion command executing")
     global skynet_lab_role
     members_roles = ctx.message.author.roles
     # print(str(roles))
@@ -449,10 +448,10 @@ async def suggest(ctx, *sugg):
             suggestion_confirm_embed.add_field(name="Suggestion:", value=suggestion_temp,
                                                inline=False)
             skynetlab_assign_embed_ref = await ctx.send(embed=suggestion_confirm_embed)
-            await skynetlab_assign_embed_ref.add_reaction(emoji='🟢')
-            await skynetlab_assign_embed_ref.add_reaction(emoji='🟠')
-            await skynetlab_assign_embed_ref.add_reaction(emoji='🔴')
-            await skynetlab_assign_embed_ref.add_reaction(emoji='✖')
+            await skynetlab_assign_embed_ref.add_reaction('🟢')
+            await skynetlab_assign_embed_ref.add_reaction('🟠')
+            await skynetlab_assign_embed_ref.add_reaction('🔴')
+            await skynetlab_assign_embed_ref.add_reaction('✖')
 
         else:
             await ctx.send("Please use the {0.mention} channel for suggestions!".format(bugs_and_suggestions_channel))

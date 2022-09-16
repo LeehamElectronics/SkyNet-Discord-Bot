@@ -6,13 +6,16 @@ from discord import app_commands
 from discord.ext import commands
 from discord import Interaction
 from discord.app_commands import AppCommandError
+import src.diagnostics as diagnostics
+from src.db import configuration
 
 
 class CogLoader(commands.Cog):
     # ----- __init__ function runs on reload ----- #
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
-        bot.tree.on_error = on_app_command_error
+        bot.tree.on_error = self.on_app_command_error
+        self.error_log_channel = self.bot.get_channel(configuration.ChannelObjects.discord_timing_channel_id)
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -21,8 +24,7 @@ class CogLoader(commands.Cog):
     @app_commands.checks.has_any_role('Owner', 'Admin')
     @app_commands.command(name="reload", description="Reload all/one of the bots cogs")
     async def reload_cogs(self, interaction: discord.Interaction, cog: str) -> None:
-        """ /command-reload """
-        if not cog:
+        if not cog or cog == 'all':
             # No cog, means we reload all cogs
             print("Reloading all cogs")
             embed = discord.Embed(
@@ -100,17 +102,16 @@ class CogLoader(commands.Cog):
     @reload_cogs.autocomplete('cog')
     async def reload_cogs_autocomplete(self, interaction: discord.Interaction, current: str
     ) -> list[app_commands.Choice[str]]:
-        cogs = ['cog_loader', 'invite', 'guild_setup_handler', 'message_events']
+        cogs = ['cog_loader', 'invite', 'guild_setup_handler', 'message_events', 'lab_commands', 'all']
         return [
             app_commands.Choice(name=cog, value=cog)
             for cog in cogs if current.lower() in cog.lower()
         ]
 
-
-# error handler
-async def on_app_command_error(interaction: Interaction, error: AppCommandError):
-    print(error)
-    await interaction.response.send_message('no', ephemeral=True)
+    # error handler
+    async def on_app_command_error(self, interaction: Interaction, error: AppCommandError):
+        embed = diagnostics.log_error('severe', 'command', 'Command failed to run', str(error), 'cog_loader.py')
+        await self.error_log_channel.send(embed=embed)
 
 
 async def setup(bot: commands.Bot) -> None:
