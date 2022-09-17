@@ -25,7 +25,7 @@ class OwnerCommands(commands.Cog):
     async def sync_command(self, interaction: discord.Interaction, element: str) -> None:
         if not element:
             await interaction.response.send_message('Sync what?', ephemeral=True)
-        else:
+        elif element == 'tree':
             await self.bot.tree.sync(guild=interaction.guild)
             await interaction.response.send_message('Tree has been synced', ephemeral=True)
 

@@ -100,7 +100,14 @@ class CogLoader(commands.Cog):
     @reload_cogs.autocomplete('cog')
     async def reload_cogs_autocomplete(self, interaction: discord.Interaction, current: str
     ) -> list[app_commands.Choice[str]]:
-        cogs = ['cog_loader', 'invite', 'guild_setup_handler', 'message_events', 'lab_commands', 'manager_commands', 'admin_commands', 'owner_commands', 'all']
+        # cogs = ['cog_loader', 'invite', 'guild_setup_handler', 'message_events', 'lab_commands', 'manager_commands', 'admin_commands', 'owner_commands', 'watchtower_commands', 'all']
+        self.list_of_cogs = []
+        for ext in os.listdir("./cogs/"):
+            if ext.endswith(".py") and not ext.startswith("_"):
+                self.list_of_cogs.append(ext[:-3])
+        self.list_of_cogs.append('all')
+
+        cogs = self.list_of_cogs
         return [
             app_commands.Choice(name=cog, value=cog)
             for cog in cogs if current.lower() in cog.lower()

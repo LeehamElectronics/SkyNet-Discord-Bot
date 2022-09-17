@@ -42,7 +42,7 @@ class ManagerCommands(commands.Cog):
         if not member:
             await interaction.response.send_message('What Member?', ephemeral=True)
         else:
-            role = discord.utils.get(member.server.roles, name='Chat Muted')
+            role = discord.utils.get(member.guild.roles, name='Chat Muted')
             await interaction.user.add_roles(member, role)
             embed = discord.Embed(title="User Muted!",
                                   description="**{0}** was muted by **{1}**!".format(member, interaction.message.author),
