@@ -1,5 +1,4 @@
 import os
-import traceback
 import asyncio
 import discord
 from discord import app_commands
@@ -101,7 +100,7 @@ class CogLoader(commands.Cog):
     @reload_cogs.autocomplete('cog')
     async def reload_cogs_autocomplete(self, interaction: discord.Interaction, current: str
     ) -> list[app_commands.Choice[str]]:
-        cogs = ['cog_loader', 'invite', 'guild_setup_handler', 'message_events', 'lab_commands', 'all']
+        cogs = ['cog_loader', 'invite', 'guild_setup_handler', 'message_events', 'lab_commands', 'manager_commands', 'admin_commands', 'owner_commands', 'all']
         return [
             app_commands.Choice(name=cog, value=cog)
             for cog in cogs if current.lower() in cog.lower()

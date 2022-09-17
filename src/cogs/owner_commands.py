@@ -7,7 +7,7 @@ import src.diagnostics as diagnostics
 from src.db import configuration
 
 
-class LabCommands(commands.Cog):
+class OwnerCommands(commands.Cog):
     # ----- __init__ function runs on reload ----- #
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
@@ -18,29 +18,29 @@ class LabCommands(commands.Cog):
     async def on_ready(self):
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
-    @app_commands.checks.has_any_role('Skynet Labs', 'Admin')
-    @app_commands.command(name="suggest", description="Make a suggestion")
-    async def suggest_command(self, interaction: discord.Interaction, suggestion: str) -> None:
-        if not suggestion:
-            pass
+    @app_commands.checks.has_any_role('Owner')
+    @app_commands.command(name="sync", description="sync elements")
+    async def sync_command(self, interaction: discord.Interaction, element: str) -> None:
+        if not element:
+            await interaction.response.send_message('Sync what?', ephemeral=True)
         else:
-            await interaction.response.send_message('suggestion made', ephemeral=True)
+            await self.bot.tree.sync(guild=interaction.guild)
 
-    @suggest_command.autocomplete('suggestion')
-    async def reload_cogs_autocomplete(self, interaction: discord.Interaction, current: str
+    @sync_command.autocomplete('element')
+    async def sync_elements_autocomplete(self, interaction: discord.Interaction, current: str
     ) -> list[app_commands.Choice[str]]:
-        cogs = ['minecraft', 'discord', 'other']
+        elements = ['tree', 'other']
         return [
-            app_commands.Choice(name=cog, value=cog)
-            for cog in cogs if current.lower() in cog.lower()
+            app_commands.Choice(name=element, value=element)
+            for element in elements if current.lower() in element.lower()
         ]
 
     # error handler
     async def on_app_command_error(self, interaction: Interaction, error: AppCommandError):
-        embed = diagnostics.log_error('severe', 'command', 'Command failed to run', str(error), 'lab_commands.py')
+        embed = diagnostics.log_error('severe', 'command', 'Command failed to run', str(error), 'owner_commands.py')
         await self.error_log_channel.send(embed=embed)
 
 
 async def setup(bot: commands.Bot) -> None:
-    await bot.add_cog(LabCommands(bot))
+    await bot.add_cog(OwnerCommands(bot))
 
