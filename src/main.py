@@ -24,7 +24,6 @@
 ###################################
 # Discord related API packages #
 import discord
-from discord import app_commands
 from discord.ext import commands
 from discord.utils import get
 from discord.ext import tasks  # For scheduling repeated function calls such as timers.
@@ -40,6 +39,17 @@ import feedparser  # for RSS Feeds!
 import src.db.configuration as configuration
 import src.db.database as database
 from src.db.load_configs import read_rules_into_mem
+
+import discord
+from discord.utils import get
+import asyncio  # For running asynchronous code...
+import re
+import requests
+import PIL
+import json
+import mysql.connector  # For interacting with the internal MySQL Server
+import urllib.request
+
 
 print("Loading Configuration...")
 global_configuration_dict = configuration.ConfigFile.root_conf  # Load our configuration file into memory

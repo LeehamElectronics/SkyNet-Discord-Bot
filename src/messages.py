@@ -4,8 +4,6 @@
 #                                           of strings to check against.                                               #
 #                                                                                                                      #
 ########################################################################################################################
-import yaml
-
 
 def global_check_for_swears(message):
     if message == 'swear':
