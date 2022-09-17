@@ -9,6 +9,10 @@ def load_main_config():
     path_dir = os.getcwd().replace('\\', '/').replace('src', 'conf')
     conf_dir = f"{path_dir}/config.yml"
 
+    # If folder doesn't exist, then create it.
+    if not os.path.isdir(path_dir):
+        os.makedirs(path_dir)
+
     if os.path.isfile(conf_dir):
         print("configuration file exists")
 
