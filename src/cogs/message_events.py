@@ -103,8 +103,14 @@ class MessageEvents(commands.Cog):
             await self.dm_log_channel.send(embed=embed)
             return
 
+        cleaned_content = content
+        whitelisted_words = [configuration.ConfigFile.root_conf['whitelisted_words']]
+        for whitelisted_word in whitelisted_words[0]:
+            if whitelisted_word.lower() in content.lower():
+                cleaned_content = cleaned_content.lower().replace(whitelisted_word.lower(), '-')
+
         # check for inappropriate language
-        inappropriate_probability = predict_prob([content])
+        inappropriate_probability = predict_prob([cleaned_content])
         embed = discord.Embed(
             title=str(author.display_name),
             description=f'{channel_of_message.mention}',

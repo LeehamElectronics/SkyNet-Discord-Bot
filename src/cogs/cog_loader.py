@@ -26,7 +26,6 @@ class CogLoader(commands.Cog):
     async def reload_cogs(self, interaction: discord.Interaction, cog: str) -> None:
         if not cog or cog == 'all':
             # No cog, means we reload all cogs
-            print("Reloading all cogs")
             embed = discord.Embed(
                 title="Reloading all cogs!",
                 color=0x808080

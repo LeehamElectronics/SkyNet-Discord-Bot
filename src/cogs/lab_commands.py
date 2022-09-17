@@ -25,7 +25,7 @@ class LabCommands(commands.Cog):
     @app_commands.command(name="suggest", description="Make a suggestion")
     async def suggest_command(self, interaction: discord.Interaction, suggestion: str) -> None:
         if not suggestion:
-            print("no suggestion made")
+            pass
         else:
             await interaction.response.send_message('suggestion made', ephemeral=True)
 
