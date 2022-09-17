@@ -9,7 +9,7 @@ import asyncio  # For running asynchronous code...
 import os
 import re  # For removing all non integers form a string, this is for converting @mentions into user ID
 
-import src.db.configuration as configuration
+import db.configuration as configuration
 from check_routines import check_roles
 from discord_embed_generators import gen_punishment_embed_mod_log_embed, gen_unban_embed
 from mathmatical_functions import _map

@@ -1,6 +1,6 @@
 import datetime
 import discord
-import src.db.configuration as configuration
+import db.configuration as configuration
 
 image_links = configuration.ConfigFile.root_conf['image_links']
 logging_level = 1
