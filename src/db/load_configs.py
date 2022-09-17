@@ -6,7 +6,9 @@ import yaml
 def load_main_config():
     print("Loading main configuration file")
     # Procedure one is to check if the configuration file exists, it should be in root:
-    path_dir = os.getcwd().replace('\\', '/').replace('src', 'conf')
+    path_dir = os.getcwd().replace('\\', '/')
+    path_dir = path_dir[:-3] + 'conf'
+    print(path_dir)
     conf_dir = f"{path_dir}/config.yml"
 
     # If folder doesn't exist, then create it.
