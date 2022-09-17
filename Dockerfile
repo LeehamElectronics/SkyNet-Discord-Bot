@@ -11,8 +11,8 @@ LABEL Maintainer="ldprice"
 WORKDIR /usr/app/src
 
 #to COPY the remote file at working directory in container
-COPY ./src ./
-COPY ./media ./
+COPY ./src ./src
+COPY ./media ./media
 
 
 #CMD instruction should be used to run the software
