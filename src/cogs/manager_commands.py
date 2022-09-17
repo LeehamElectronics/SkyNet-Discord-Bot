@@ -6,6 +6,8 @@ from discord.app_commands import AppCommandError
 import src.diagnostics as diagnostics
 from src.db import configuration
 
+# clear and mute command
+
 
 class ManagerCommands(commands.Cog):
     # ----- __init__ function runs on reload ----- #
@@ -33,6 +35,19 @@ class ManagerCommands(commands.Cog):
                 return
             await interaction.response.send_message(f'Clearing {messages} messages', ephemeral=True)
             await interaction.channel.purge(limit=messages)
+
+    @app_commands.checks.has_any_role('Owner', 'Admin')
+    @app_commands.command(name="mute", description="mute a member")
+    async def mute_command(self, interaction: discord.Interaction, member: discord.Member) -> None:
+        if not member:
+            await interaction.response.send_message('What Member?', ephemeral=True)
+        else:
+            role = discord.utils.get(member.server.roles, name='Chat Muted')
+            await interaction.user.add_roles(member, role)
+            embed = discord.Embed(title="User Muted!",
+                                  description="**{0}** was muted by **{1}**!".format(member, interaction.message.author),
+                                  color=0xff00f6)
+            await interaction.response.send_message(embed=embed, ephemeral=True)
 
     # error handler
     async def on_app_command_error(self, interaction: Interaction, error: AppCommandError):

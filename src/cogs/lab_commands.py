@@ -18,7 +18,7 @@ class LabCommands(commands.Cog):
     async def on_ready(self):
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
 
-    @app_commands.checks.has_any_role('Skynet Labs', 'Admin')
+    @app_commands.checks.has_any_role('SkyNet Labs', 'Admin')
     @app_commands.command(name="suggest", description="Make a suggestion")
     async def suggest_command(self, interaction: discord.Interaction, suggestion: str) -> None:
         if not suggestion:

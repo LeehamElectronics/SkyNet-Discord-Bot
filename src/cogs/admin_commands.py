@@ -6,6 +6,8 @@ from discord.app_commands import AppCommandError
 import src.diagnostics as diagnostics
 from src.db import configuration
 
+# verify user command
+
 
 class AdminCommands(commands.Cog):
     # ----- __init__ function runs on reload ----- #

@@ -6,6 +6,8 @@ from discord.app_commands import AppCommandError
 import src.diagnostics as diagnostics
 from src.db import configuration
 
+# sync command
+
 
 class OwnerCommands(commands.Cog):
     # ----- __init__ function runs on reload ----- #
@@ -25,6 +27,7 @@ class OwnerCommands(commands.Cog):
             await interaction.response.send_message('Sync what?', ephemeral=True)
         else:
             await self.bot.tree.sync(guild=interaction.guild)
+            await interaction.response.send_message('Tree has been synced', ephemeral=True)
 
     @sync_command.autocomplete('element')
     async def sync_elements_autocomplete(self, interaction: discord.Interaction, current: str
