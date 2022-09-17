@@ -1,4 +1,9 @@
-import src.db.load_configs as load_configs
+import os
+print(os.getcwd()[-4:])
+if os.getcwd()[-4:] == '\src':
+    import src.db.load_configs as load_configs
+else:
+    import load_configs as load_configs
 
 
 class ConfigFile:

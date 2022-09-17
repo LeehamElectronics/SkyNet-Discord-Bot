@@ -1,10 +1,14 @@
+import os
+print(os.getcwd()[-4:])
+if os.getcwd()[-4:] == '\src':
+    from src.db.python_mysql_dbconfig import read_db_config
+else:
+    from python_mysql_dbconfig import read_db_config
+
 import json
 from datetime import datetime
-
 import src.diagnostics as diagnostics
-
 from mysql.connector import MySQLConnection, Error
-from src.db.python_mysql_dbconfig import read_db_config
 
 
 def create_tables():
