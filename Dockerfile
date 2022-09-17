@@ -20,5 +20,5 @@ COPY ./media ./
 
 COPY ./config.yml ./conf/config.yml
 
-RUN pip3 install ./src/requirements.txt
+RUN pip3 install ./requirements.txt
 CMD [ "python", "./src/main.py"]
