@@ -36,9 +36,9 @@ import datetime
 import feedparser  # for RSS Feeds!
 
 # These imports are from local .py files:
-import db.configuration as configuration
-import db.database as database
-from db.load_configs import read_rules_into_mem
+import configuration as configuration
+import database as database
+from load_configs import read_rules_into_mem
 
 import discord
 from discord.utils import get

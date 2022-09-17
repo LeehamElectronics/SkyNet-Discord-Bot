@@ -1,6 +1,6 @@
 # Simple adds a specific amount of XP to the user
 import datetime
-import db.database as database
+import database as database
 
 
 # Used to check if player can level up or level up MULTIPLE levels, and then it does so and announces it to user.

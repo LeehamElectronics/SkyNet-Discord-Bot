@@ -2,13 +2,7 @@
 #   Import modules into program   #
 ###################################
 import os
-
-if __name__ == 'db.configuration':
-    print(__name__)
-    import db.configuration as configuration
-elif __name__ == 'src.db.configuration':
-    print(__name__)
-    import src.db.configuration as configuration
+import configuration
 
 import discord
 import json

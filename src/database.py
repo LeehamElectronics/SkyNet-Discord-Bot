@@ -3,7 +3,8 @@ from configparser import ConfigParser
 
 import json
 from datetime import datetime
-import src.diagnostics as diagnostics
+
+import diagnostics
 from mysql.connector import MySQLConnection, Error
 
 
