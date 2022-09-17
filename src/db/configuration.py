@@ -50,3 +50,12 @@ class ChannelObjects:
     log_channel_id_dict = ConfigFile.root_conf['discord_channel_ids'][
         'log_channels']
     rule_breaker_log_channel_id = log_channel_id_dict['rule_breaker_log']
+    commands_logger_channel_id = log_channel_id_dict['commands_logger_channel']
+
+
+class RoleIDObjects:
+    general_role_id_dict = ConfigFile.root_conf['discord_role_ids']  # Get to the root!
+    chat_muted_role_id = general_role_id_dict['general_roles']['chat_muted']
+    owner_role_id = general_role_id_dict['general_roles']['owner']
+    admin_role_id = general_role_id_dict['general_roles']['admin']
+    mod_role_id = general_role_id_dict['general_roles']['mod']

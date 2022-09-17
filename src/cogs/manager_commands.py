@@ -5,6 +5,7 @@ from discord import Interaction
 from discord.app_commands import AppCommandError
 import src.diagnostics as diagnostics
 from src.db import configuration
+from discord.utils import get
 
 # clear and mute command
 
@@ -36,16 +37,43 @@ class ManagerCommands(commands.Cog):
             await interaction.response.send_message(f'Clearing {messages} messages', ephemeral=True)
             await interaction.channel.purge(limit=messages)
 
-    @app_commands.checks.has_any_role('Owner', 'Admin')
+    @app_commands.checks.has_any_role('Owner', 'Admin', 'Moderator')
     @app_commands.command(name="mute", description="mute a member")
     async def mute_command(self, interaction: discord.Interaction, member: discord.Member) -> None:
         if not member:
             await interaction.response.send_message('What Member?', ephemeral=True)
+            return
+
+        owner_role = interaction.guild.get_role(configuration.RoleIDObjects.owner_role_id)
+        admin_role = interaction.guild.get_role(configuration.RoleIDObjects.admin_role_id)
+        mod_role = interaction.guild.get_role(configuration.RoleIDObjects.mod_role_id)
+        muted_role = interaction.guild.get_role(configuration.RoleIDObjects.chat_muted_role_id)
+
+        # check if member is an mod, admin, or owner
+        members_roles = member.roles
+        super_roles = [owner_role, admin_role, mod_role, muted_role]
+        for super_role in super_roles:
+            if super_role in members_roles:
+                # cancel this mute command because the member has super roles
+                await interaction.response.send_message('Sorry but this Member can not be muted', ephemeral=True)
+                return
+
+        await member.add_roles(muted_role)
+        embed = discord.Embed(title="User Muted!",
+                              description="**{0}** was muted by **{1}**!".format(member, interaction.user),
+                              color=0xff00f6)
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+
+    @app_commands.checks.has_any_role('Owner', 'Admin', 'Moderator')
+    @app_commands.command(name="unmute", description="unmute a member")
+    async def unmute_command(self, interaction: discord.Interaction, member: discord.Member) -> None:
+        if not member:
+            await interaction.response.send_message('What Member?', ephemeral=True)
         else:
-            role = discord.utils.get(member.guild.roles, name='Chat Muted')
-            await interaction.user.add_roles(member, role)
-            embed = discord.Embed(title="User Muted!",
-                                  description="**{0}** was muted by **{1}**!".format(member, interaction.message.author),
+            muted_role = interaction.guild.get_role(configuration.RoleIDObjects.chat_muted_role_id)
+            await member.remove_roles(muted_role)
+            embed = discord.Embed(title="User no longer Muted!",
+                                  description="**{0}** was unmuted by **{1}**!".format(member, interaction.user),
                                   color=0xff00f6)
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
