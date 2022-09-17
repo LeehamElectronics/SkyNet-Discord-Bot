@@ -8,7 +8,7 @@ from mysql.connector import MySQLConnection, Error
 
 
 path_dir = os.getcwd().replace('\\', '/').replace('src', 'conf')
-mysql_conf_dir = f"{path_dir}/config.ini"
+mysql_conf_dir = f"/usr/app/src/src/db/config.ini"
 
 
 def read_db_config(filename=mysql_conf_dir, section='mysql'):

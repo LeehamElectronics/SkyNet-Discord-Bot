@@ -7,14 +7,13 @@ def load_main_config():
     print("Loading main configuration file")
     # Procedure one is to check if the configuration file exists, it should be in root:
     path_dir = os.getcwd().replace('\\', '/')
-    path_dir = path_dir[:-3] + 'conf'
     print(path_dir)
-    conf_dir = f"{path_dir}/config.yml"
+    conf_dir = f"/usr/app/src/src/db/config.yml"
 
     # If folder doesn't exist, then create it.
     if not os.path.isdir(path_dir):
-        os.makedirs(path_dir)
-
+        # os.makedirs(path_dir)
+        pass
     if os.path.isfile(conf_dir):
         print("configuration file exists")
 

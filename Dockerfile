@@ -18,7 +18,6 @@ COPY ./media ./media
 #CMD instruction should be used to run the software
 #contained by your image, along with any arguments.
 
-COPY ./config.yml ./conf/config.yml
 COPY requirements.txt requirements.txt
 
 RUN pip3 install -r ./requirements.txt
