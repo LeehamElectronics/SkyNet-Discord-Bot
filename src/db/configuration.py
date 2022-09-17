@@ -1,9 +1,10 @@
 import os
-print(os.getcwd()[-4:])
-if os.getcwd()[-4:] == '\src':
+if __name__ == 'db.configuration':
+    print(__name__)
+    import db.load_configs as load_configs
+elif __name__ == 'src.db.configuration':
+    print(__name__)
     import src.db.load_configs as load_configs
-else:
-    import load_configs as load_configs
 
 
 class ConfigFile:
