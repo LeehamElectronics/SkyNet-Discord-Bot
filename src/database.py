@@ -1,3 +1,4 @@
+import os
 from configparser import ConfigParser
 import json
 from datetime import datetime
@@ -5,27 +6,13 @@ import diagnostics
 from mysql.connector import MySQLConnection, Error
 
 
-mysql_conf_dir = f"config.ini"
-
-
-def read_db_config(filename=mysql_conf_dir, section='mysql'):
-    """ Read database configuration file and return a dictionary object
-    :param filename: name of the configuration file
-    :param section: section of database configuration
-    :return: a dictionary of database parameters
-    """
-    # create parser and read ini configuration file
-    parser = ConfigParser()
-    parser.read(filename)
-
-    # get section, default to mysql
-    db = {}
-    if parser.has_section(section):
-        items = parser.items(section)
-        for item in items:
-            db[item[0]] = item[1]
-    else:
-        raise Exception('{0} not found in the {1} file'.format(section, filename))
+def read_db_config():
+    db = {'host': os.environ["MY_SQL_HOST"],
+          'port': os.environ["MY_SQL_PORT"],
+          'database': os.environ["MY_SQL_DB"],
+          'user': os.environ["MY_SQL_USER"],
+          'password': os.environ["MY_SQL_PASSWORD"],
+          'auth_plugin': 'mysql_native_password'}
 
     return db
 
