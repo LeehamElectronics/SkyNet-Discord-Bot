@@ -10,10 +10,10 @@ import discord
 from discord.ext import commands
 from discord.utils import get
 
-import src.configuration as configuration
-import src.database as database
-import src.levelling as levelling
-from src.misc_functions import send_need_help_prompt
+import configuration as configuration
+import database as database
+import levelling as levelling
+from misc_functions import send_need_help_prompt
 
 
 class MessageEvents(commands.Cog):

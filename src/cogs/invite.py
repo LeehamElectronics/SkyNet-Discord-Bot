@@ -1,5 +1,5 @@
 from discord.ext import commands
-import src.configuration as configuration
+import configuration as configuration
 
 
 class InviteEvents(commands.Cog):

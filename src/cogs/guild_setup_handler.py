@@ -1,6 +1,6 @@
 from discord.ext import commands
-import src.configuration as configuration
-import src.database as database
+import configuration as configuration
+import database as database
 
 
 class GuildSetupHandler(commands.Cog):

@@ -1,6 +1,6 @@
 import datetime
 from discord.ext import commands
-import src.configuration as configuration
+import configuration as configuration
 
 
 # this simply logs all commands that members run into a discord channel and the SQL database.

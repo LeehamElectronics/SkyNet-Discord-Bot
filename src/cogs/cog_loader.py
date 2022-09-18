@@ -5,8 +5,8 @@ from discord import app_commands
 from discord.ext import commands
 from discord import Interaction
 from discord.app_commands import AppCommandError
-import src.diagnostics as diagnostics
-import src.configuration as configuration
+import diagnostics as diagnostics
+import configuration as configuration
 
 
 class CogLoader(commands.Cog):
