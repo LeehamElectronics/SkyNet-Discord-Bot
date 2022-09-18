@@ -29,7 +29,7 @@ class CogLoader(commands.Cog):
                 title="Reloading all cogs!",
                 color=0x808080
             )
-            for ext in os.listdir("./cogs/"):
+            for ext in os.listdir("cogs"):
                 if ext.endswith(".py") and not ext.startswith("_"):
                     try:
                         await self.bot.unload_extension(f"cogs.{ext[:-3]}")
@@ -102,7 +102,7 @@ class CogLoader(commands.Cog):
     ) -> list[app_commands.Choice[str]]:
         # cogs = ['cog_loader', 'invite', 'guild_setup_handler', 'message_events', 'lab_commands', 'manager_commands', 'admin_commands', 'owner_commands', 'watchtower_commands', 'all']
         self.list_of_cogs = []
-        for ext in os.listdir("./cogs/"):
+        for ext in os.listdir("cogs"):
             if ext.endswith(".py") and not ext.startswith("_"):
                 self.list_of_cogs.append(ext[:-3])
         self.list_of_cogs.append('all')
