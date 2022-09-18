@@ -173,8 +173,9 @@ class CogLoader(commands.Cog):
             elif ext.endswith(".py") and not ext.startswith("_"):
                 # upgrade this cog by downloading from GitHub:
                 r = requests.get(f'https://raw.githubusercontent.com/LeehamElectronics/SkyNet-Discord-Bot/master/src/cogs/{ext}')
-                f = open(f"./cogs/{ext}", 'wb')
+                f = open(f"cogs/{ext}", 'wb')
                 f.write(r.content)
+
                 try:
                     await self.bot.unload_extension(f"cogs.{ext[:-3]}")
                     await self.bot.load_extension(f"cogs.{ext[:-3]}")
