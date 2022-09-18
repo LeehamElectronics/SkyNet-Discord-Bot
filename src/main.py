@@ -19,13 +19,10 @@
 # ██████╔╝╚█████╔╝██║░░░░░░░░██║░░░░░╚██╔╝░╚██╔╝░██║░░██║██║░░██║███████╗
 # ╚═════╝░░╚════╝░╚═╝░░░░░░░░╚═╝░░░░░░╚═╝░░░╚═╝░░╚═╝░░╚═╝╚═╝░░╚═╝╚══════╝
 
-###################################
-#   Import modules into program   #
-###################################
 # Discord related API packages #
 import discord
-from discord.ext import commands
 from discord.utils import get
+from discord.ext import commands
 from discord.ext import tasks  # For scheduling repeated function calls such as timers.
 
 # misc #
@@ -35,19 +32,9 @@ import yaml
 import datetime
 import feedparser  # for RSS Feeds!
 
-# These imports are from local .py files:
+# local #
 import configuration as configuration
 import database as database
-
-import discord
-from discord.utils import get
-import asyncio  # For running asynchronous code...
-import re
-import requests
-import PIL
-import json
-import mysql.connector  # For interacting with the internal MySQL Server
-import urllib.request
 
 
 print("Loading Configuration...")

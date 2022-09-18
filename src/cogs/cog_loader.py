@@ -1,6 +1,7 @@
 import os
 import asyncio
 import discord
+import requests
 from discord import app_commands
 from discord.ext import commands
 from discord import Interaction
@@ -100,6 +101,108 @@ class CogLoader(commands.Cog):
     @reload_cogs.autocomplete('cog')
     async def reload_cogs_autocomplete(self, interaction: discord.Interaction, current: str
     ) -> list[app_commands.Choice[str]]:
+        # cogs = ['cog_loader', 'invite', 'guild_setup_handler', 'message_events', 'lab_commands', 'manager_commands', 'admin_commands', 'owner_commands', 'watchtower_commands', 'all']
+        self.list_of_cogs = []
+        for ext in os.listdir("cogs"):
+            if ext.endswith(".py") and not ext.startswith("_"):
+                self.list_of_cogs.append(ext[:-3])
+        self.list_of_cogs.append('all')
+
+        cogs = self.list_of_cogs
+        return [
+            app_commands.Choice(name=cog, value=cog)
+            for cog in cogs if current.lower() in cog.lower()
+        ]
+
+    @app_commands.checks.has_any_role('Owner')
+    @app_commands.command(name="upgrade", description="Upgrade all/one of the bots cogs")
+    async def upgrade_cogs(self, interaction: discord.Interaction, cog: str) -> None:
+        if not cog or cog == 'all':
+            # No cog, means we reload all cogs
+            embed = discord.Embed(
+                title="Updating all cogs!",
+                color=0x808080
+            )
+            for ext in os.listdir("cogs"):
+                if ext.endswith(".py") and not ext.startswith("_"):
+                    # download new cog from GitHub:
+                    r = requests.get(
+                        f'https://raw.githubusercontent.com/LeehamElectronics/SkyNet-Discord-Bot/master/src/cogs/{ext}')
+                    f = open(f"./cogs/{ext}", 'wb')
+                    f.write(r.content)
+
+                    try:
+                        await self.bot.unload_extension(f"cogs.{ext[:-3]}")
+                        await self.bot.load_extension(f"cogs.{ext[:-3]}")
+                        embed.add_field(
+                            name=f"Reloaded: `{ext}`",
+                            value='\uFEFF',
+                            inline=False
+                        )
+                    except:
+                        try:  # Run a second try method in case the cog was already unloaded.
+                            await self.bot.load_extension(f"cogs.{ext[:-3]}")
+                            embed.add_field(
+                                name=f"Loaded: `{ext}`",
+                                value='\uFEFF',
+                                inline=False
+                            )
+                        except Exception as e:
+                            embed.add_field(
+                                name=f"Failed to reload: `{ext}`",
+                                value=e[:1024],
+                                inline=False
+                            )
+                    await asyncio.sleep(0.5)
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+        else:
+            # upgrade the specific cog
+            embed = discord.Embed(
+                title=f"Upgrading {cog} cog!",
+                color=0x808080
+            )
+            ext = f"{cog.lower()}.py"
+            if not os.path.exists(f"./cogs/{ext}"):
+                # if the file does not exist
+                embed.add_field(
+                    name=f"Failed to reload: `{ext}`",
+                    value="This cog does not exist.",
+                    inline=False
+                )
+
+            elif ext.endswith(".py") and not ext.startswith("_"):
+                # upgrade this cog by downloading from GitHub:
+                r = requests.get(f'https://raw.githubusercontent.com/LeehamElectronics/SkyNet-Discord-Bot/master/src/cogs/{ext}')
+                f = open(f"./cogs/{ext}", 'wb')
+                f.write(r.content)
+                try:
+                    await self.bot.unload_extension(f"cogs.{ext[:-3]}")
+                    await self.bot.load_extension(f"cogs.{ext[:-3]}")
+                    embed.add_field(
+                        name=f"Reloaded: `{ext}`",
+                        value='\uFEFF',
+                        inline=False
+                    )
+                except Exception:
+                    try:  # Run a second try method in case the cog was already unloaded.
+                        await self.bot.load_extension(f"cogs.{ext[:-3]}")
+                        embed.add_field(
+                            name=f"Loaded: `{ext}`",
+                            value='\uFEFF',
+                            inline=False
+                        )
+                    except Exception as e:
+                        # desired_trace = traceback.format_exc()
+                        embed.add_field(
+                            name=f"Failed to reload: `{ext}`",
+                            value=e,
+                            inline=False
+                        )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+
+    @upgrade_cogs.autocomplete('cog')
+    async def upgrade_cogs_autocomplete(self, interaction: discord.Interaction, current: str
+                                       ) -> list[app_commands.Choice[str]]:
         # cogs = ['cog_loader', 'invite', 'guild_setup_handler', 'message_events', 'lab_commands', 'manager_commands', 'admin_commands', 'owner_commands', 'watchtower_commands', 'all']
         self.list_of_cogs = []
         for ext in os.listdir("cogs"):
