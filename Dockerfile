@@ -1,5 +1,5 @@
 #Deriving the latest base image
-FROM python:latest
+FROM python:3.10.2
 
 
 #Labels as key value pair
@@ -12,7 +12,6 @@ WORKDIR /usr/app/
 
 #to COPY the remote file at working directory in container
 COPY ./src ./src
-COPY ./media ./media
 
 
 #CMD instruction should be used to run the software
