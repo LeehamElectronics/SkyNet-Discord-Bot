@@ -4,11 +4,10 @@ from discord.ext import commands
 from discord import Interaction
 from discord.app_commands import AppCommandError
 import src.diagnostics as diagnostics
-from src.db import configuration
+import src.configuration as configuration
+
 
 # verify user command
-
-
 class AdminCommands(commands.Cog):
     # ----- __init__ function runs on reload ----- #
     def __init__(self, bot: commands.Bot) -> None:

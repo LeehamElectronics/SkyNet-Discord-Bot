@@ -38,7 +38,6 @@ import feedparser  # for RSS Feeds!
 # These imports are from local .py files:
 import configuration as configuration
 import database as database
-from load_configs import read_rules_into_mem
 
 import discord
 from discord.utils import get
@@ -161,7 +160,7 @@ cplusplus_role_id = misc_roles_id_dict['cplusplus_role']
 ####################################
 #  Read Rules from YML into list   #
 ####################################
-rules_msg_list = read_rules_into_mem(rules_yml_location)  # Read rules from yml file into a list
+# rules_msg_list = read_rules_into_mem(rules_yml_location)  # Read rules from yml file into a list
 
 ########################################################
 #                                                      #
@@ -309,7 +308,7 @@ async def on_ready():
 
     # send a restart notification embed:
     await load_cogs()
-    await send_restart_notification()
+    # await send_restart_notification()
 
     # Begin cycle operations below:
     cycle_bot_status.start()  # Change status of bot:
@@ -423,10 +422,6 @@ async def post_rules(ctx):
     members_roles = ctx.message.author.roles
     if admin_role in members_roles:
         print("Sufficient role!")
-        await ctx.message.channel.send(rules_msg_list[0])
-        await ctx.message.channel.send(rules_msg_list[1])
-        await ctx.message.channel.send(rules_msg_list[2])
-        await ctx.message.delete()
     else:
         await ctx.message.channel.send("Oh, so you're am Admin r u??")
 

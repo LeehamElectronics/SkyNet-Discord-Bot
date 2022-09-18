@@ -4,11 +4,10 @@ from discord.ext import commands
 from discord import Interaction
 from discord.app_commands import AppCommandError
 import src.diagnostics as diagnostics
-from src.db import configuration
-
-# sync command
+import src.configuration as configuration
 
 
+# sync command does not work, it must run from main.py
 class OwnerCommands(commands.Cog):
     # ----- __init__ function runs on reload ----- #
     def __init__(self, bot: commands.Bot) -> None:

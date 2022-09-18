@@ -1,10 +1,6 @@
-import os
-import traceback
-import asyncio
-import discord
 from discord.ext import commands
-import src.db.configuration as configuration
-import src.db.database as  database
+import src.configuration as configuration
+import src.database as database
 
 
 class GuildSetupHandler(commands.Cog):

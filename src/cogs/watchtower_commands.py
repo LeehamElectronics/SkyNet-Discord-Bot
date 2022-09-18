@@ -1,13 +1,10 @@
-import os
-import asyncio
 import discord
 from discord import app_commands
 from discord.ext import commands
 from discord import Interaction
-from discord.utils import get
 from discord.app_commands import AppCommandError
 import src.diagnostics as diagnostics
-from src.db import configuration
+import src.configuration as configuration
 
 
 class WatchtowerCommands(commands.Cog):

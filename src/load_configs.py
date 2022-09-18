@@ -5,15 +5,8 @@ import yaml
 
 def load_main_config():
     print("Loading main configuration file")
-    # Procedure one is to check if the configuration file exists, it should be in root:
-    path_dir = os.getcwd().replace('\\', '/')
-    print(path_dir)
-    conf_dir = f"/usr/app/src/src/db/config.yml"
+    conf_dir = f"config.yml"
 
-    # If folder doesn't exist, then create it.
-    if not os.path.isdir(path_dir):
-        # os.makedirs(path_dir)
-        pass
     if os.path.isfile(conf_dir):
         print("configuration file exists")
 
@@ -151,13 +144,5 @@ def load_main_config():
 
     # Return the dictionary to our main.py file
     return dict_file
-
-
-def read_rules_into_mem(path):
-    with open(path) as file:
-        # The FullLoader parameter handles the conversion from YAML
-        # scalar values to Python the dictionary format
-        list_file = yaml.load(file, Loader=yaml.FullLoader)
-        return list_file
 
 

@@ -1,8 +1,5 @@
-###################################
-#   Import modules into program   #
-###################################
 from discord.ext import commands
-import src.db.configuration as configuration
+import src.configuration as configuration
 
 
 class InviteEvents(commands.Cog):

@@ -3,7 +3,6 @@
 #        This contains basic check functions to help keep our bot clean         #
 #                                                                               #
 #################################################################################
-import discord
 from discord.utils import get
 
 

@@ -1,7 +1,6 @@
 ###################################
 #   Import modules into program   #
 ###################################
-import os
 import configuration
 
 import discord

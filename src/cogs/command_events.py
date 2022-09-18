@@ -1,24 +1,10 @@
-###################################
-#   Import modules into program   #
-###################################
 import datetime
-import random
-
-from profanity_check import predict, predict_prob
-
-import discord
 from discord.ext import commands
-from discord.utils import get
+import src.configuration as configuration
 
-import src.db.configuration as configuration
-import src.db.database as database
-import src.levelling as levelling
-from src.misc_functions import send_need_help_prompt
 
 # this simply logs all commands that members run into a discord channel and the SQL database.
 # this cog is compatible with multi guild per bot installations.
-
-
 class CommandEvents(commands.Cog):
     def __init__(self, client):
         self.client = client

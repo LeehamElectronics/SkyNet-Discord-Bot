@@ -4,12 +4,10 @@ from discord.ext import commands
 from discord import Interaction
 from discord.app_commands import AppCommandError
 import src.diagnostics as diagnostics
-from src.db import configuration
-from discord.utils import get
+import src.configuration as configuration
+
 
 # clear and mute command
-
-
 class ManagerCommands(commands.Cog):
     # ----- __init__ function runs on reload ----- #
     def __init__(self, bot: commands.Bot) -> None:
