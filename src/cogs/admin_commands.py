@@ -21,11 +21,11 @@ class AdminCommands(commands.Cog):
 
     @app_commands.checks.has_any_role('Owner', 'Admin')
     @app_commands.command(name="verify", description="verify user into server")
-    async def verify_user_command(self, interaction: discord.Interaction, user: str) -> None:
+    async def verify_user_command(self, interaction: discord.Interaction, user: discord.Member) -> None:
         if not user:
             await interaction.response.send_message('What User?', ephemeral=True)
         else:
-            await interaction.response.send_message(f'Verifying User...', ephemeral=True)
+            await interaction.response.send_message(f'Verifying Member...', ephemeral=True)
 
     # error handler
     async def on_app_command_error(self, interaction: Interaction, error: AppCommandError):
