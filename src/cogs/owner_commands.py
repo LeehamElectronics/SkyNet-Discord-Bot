@@ -31,7 +31,7 @@ class OwnerCommands(commands.Cog):
     @sync_command.autocomplete('element')
     async def sync_elements_autocomplete(self, interaction: discord.Interaction, current: str
     ) -> list[app_commands.Choice[str]]:
-        elements = ['tree', 'other']
+        elements = ['tree', 'other', 'roles']
         return [
             app_commands.Choice(name=element, value=element)
             for element in elements if current.lower() in element.lower()

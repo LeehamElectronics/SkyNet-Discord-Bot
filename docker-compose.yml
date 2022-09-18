@@ -1,7 +1,7 @@
 version: '3'
 services:
   skynet-prod-discord-bot:
-    image: 'skynetdiscordbot:latest'
+    image: 'ldprice/skynetmc-discord-bot:latest'
     environment:
       MY_SQL_HOST: "0.0.0.0"
       MY_SQL_PORT: 3306
