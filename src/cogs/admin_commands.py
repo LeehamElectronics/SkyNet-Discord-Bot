@@ -2,6 +2,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 from discord import Interaction
+from discord.utils import get
 from discord.app_commands import AppCommandError
 import diagnostics as diagnostics
 import configuration as configuration
@@ -26,6 +27,8 @@ class AdminCommands(commands.Cog):
             await interaction.response.send_message('What User?', ephemeral=True)
         else:
             await interaction.response.send_message(f'Verifying Member...', ephemeral=True)
+            member_role = get(interaction.guild.roles, id=543039798668034048)
+            await user.add_roles(member_role)
 
     # error handler
     async def on_app_command_error(self, interaction: Interaction, error: AppCommandError):
