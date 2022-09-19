@@ -13,6 +13,7 @@ class WatchtowerCommands(commands.Cog):
         self.bot = bot
         bot.tree.on_error = self.on_app_command_error
         self.error_log_channel = self.bot.get_channel(configuration.ChannelObjects.discord_timing_channel_id)
+        self.watchtower_chat_channel = self.bot.get_channel(713322070221651968)
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -28,11 +29,13 @@ class WatchtowerCommands(commands.Cog):
                 await interaction.response.send_message('Starting WT', ephemeral=True)
                 category = discord.utils.get(interaction.guild.categories, id=698306289473814550)
                 role = interaction.guild.get_role(543039798668034048)
+                await self.watchtower_chat_channel.send(f'{interaction.user.name} is Starting the WT')
                 await category.set_permissions(role, read_messages=True, send_messages=True, connect=True, speak=True, view_channel=True)
             elif action == 'stop':
                 await interaction.response.send_message('Stopping WT', ephemeral=True)
                 category = discord.utils.get(interaction.guild.categories, id=698306289473814550)
                 role = interaction.guild.get_role(543039798668034048)
+                await self.watchtower_chat_channel.send(f'{interaction.user.name} is Stopping the WT')
                 await category.set_permissions(role, read_messages=False, send_messages=False, connect=False, speak=False, view_channel=False)
 
     @watchtower.autocomplete('action')
