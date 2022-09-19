@@ -26,9 +26,12 @@ class AdminCommands(commands.Cog):
         if not user:
             await interaction.response.send_message('What User?', ephemeral=True)
         else:
-            await interaction.response.send_message(f'Verifying Member...', ephemeral=True)
             member_role = get(interaction.guild.roles, id=543039798668034048)
-            await user.add_roles(member_role)
+            if member_role in user.roles:
+                await interaction.response.send_message(f'This user is already verified!', ephemeral=True)
+            else:
+                await interaction.response.send_message(f'Verifying Member...', ephemeral=True)
+                await user.add_roles(member_role)
 
     # error handler
     async def on_app_command_error(self, interaction: Interaction, error: AppCommandError):
