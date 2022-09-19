@@ -26,11 +26,6 @@ class CogLoader(commands.Cog):
     @app_commands.command(name="reload", description="Reload all/one of the bots cogs")
     async def reload_cogs(self, interaction: discord.Interaction, cog: str) -> None:
 
-        owner_role = get(interaction.guild.roles, id=409980563391250444)
-        if owner_role in interaction.user.roles:
-            await interaction.response.send_message(f'Did you really think you have permission to run that command?', ephemeral=True)
-            return
-
         if not cog or cog == 'all':
             # No cog, means we reload all cogs
             embed = discord.Embed(
@@ -124,11 +119,6 @@ class CogLoader(commands.Cog):
     @app_commands.checks.has_any_role('Owner')
     @app_commands.command(name="upgrade", description="Upgrade all/one of the bots cogs")
     async def upgrade_cogs(self, interaction: discord.Interaction, cog: str) -> None:
-
-        owner_role = get(interaction.guild.roles, id=409980563391250444)
-        if owner_role in interaction.user.roles:
-            await interaction.response.send_message(f'Did you really think you have permission to run that command?', ephemeral=True)
-            return
 
         if not cog or cog == 'all':
             # No cog, means we reload all cogs
