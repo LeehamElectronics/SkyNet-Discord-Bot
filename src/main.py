@@ -326,15 +326,15 @@ async def cycle_bot_status():
     global cycling_status_list
     if cycling_status_list >= 4:
         cycling_status_list = 0
-        await client.change_presence(status=discord.Status.online, activity=discord.Game(name="SkyNet Servers"))
+        await client.change_presence(status=discord.Status.online, activity=discord.Game(name="Skynet Servers"))
     elif cycling_status_list == 3:
         # Setting `Playing ` status
-        await client.change_presence(status=discord.Status.online, activity=discord.Game(name="SkyNet MC"))
+        await client.change_presence(status=discord.Status.online, activity=discord.Game(name="SkynetMC"))
         cycling_status_list += 1
     elif cycling_status_list == 2:
         # Setting `Streaming ` status
         await client.change_presence(status=discord.Status.online,
-                                     activity=discord.Game(name="SkyNet Survival", url="skynetmc.ddns.me"))
+                                     activity=discord.Game(name="Skynet Survival", url="skynetmc.com.au"))
         cycling_status_list += 1
     elif cycling_status_list == 1:
         # Setting `Listening ` status
