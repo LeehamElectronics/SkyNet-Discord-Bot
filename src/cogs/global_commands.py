@@ -4,7 +4,7 @@ from discord.ext import commands
 from discord import Interaction
 from discord.app_commands import AppCommandError
 
-from mcstatus import MinecraftServer
+from mcstatus import JavaServer
 
 import diagnostics as diagnostics
 import configuration as configuration
