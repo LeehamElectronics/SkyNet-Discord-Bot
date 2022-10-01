@@ -129,33 +129,20 @@ class CogLoader(commands.Cog):
             for ext in os.listdir("cogs"):
                 if ext.endswith(".py") and not ext.startswith("_"):
                     # download new cog from GitHub:
-                    r = requests.get(
-                        f'https://raw.githubusercontent.com/LeehamElectronics/SkyNet-Discord-Bot/master/src/cogs/{ext}')
-                    f = open(f"./cogs/{ext}", 'wb')
-                    f.write(r.content)
-
                     try:
-                        await self.bot.unload_extension(f"cogs.{ext[:-3]}")
-                        await self.bot.load_extension(f"cogs.{ext[:-3]}")
+                        # upgrade this cog by downloading from GitHub:
+                        r = requests.get(
+                            f'https://raw.githubusercontent.com/LeehamElectronics/SkyNet-Discord-Bot/master/src/cogs/{ext}')
+                        f = open(f"cogs/{ext}", 'wb')
+                        f.write(r.content)
+                    except Exception as error:
                         embed.add_field(
-                            name=f"Reloaded: `{ext}`",
-                            value='\uFEFF',
+                            name=f"Failed to reload: `{ext}`",
+                            value=error,
                             inline=False
                         )
-                    except:
-                        try:  # Run a second try method in case the cog was already unloaded.
-                            await self.bot.load_extension(f"cogs.{ext[:-3]}")
-                            embed.add_field(
-                                name=f"Loaded: `{ext}`",
-                                value='\uFEFF',
-                                inline=False
-                            )
-                        except Exception as e:
-                            embed.add_field(
-                                name=f"Failed to reload: `{ext}`",
-                                value=e[:1024],
-                                inline=False
-                            )
+                        await interaction.response.send_message('failed to download cog!', ephemeral=True)
+
                     await asyncio.sleep(0.5)
             await interaction.response.send_message(embed=embed, ephemeral=True)
         else:
@@ -174,29 +161,6 @@ class CogLoader(commands.Cog):
             except Exception as error:
                 await interaction.response.send_message('failed to download cog!', ephemeral=True)
 
-            try:
-                await self.bot.unload_extension(f"cogs.{ext[:-3]}")
-                await self.bot.load_extension(f"cogs.{ext[:-3]}")
-                embed.add_field(
-                    name=f"Reloaded: `{ext}`",
-                    value='\uFEFF',
-                    inline=False
-                )
-            except Exception:
-                try:  # Run a second try method in case the cog was already unloaded.
-                    await self.bot.load_extension(f"cogs.{ext[:-3]}")
-                    embed.add_field(
-                        name=f"Loaded: `{ext}`",
-                        value='\uFEFF',
-                        inline=False
-                    )
-                except Exception as e:
-                    # desired_trace = traceback.format_exc()
-                    embed.add_field(
-                        name=f"Failed to reload: `{ext}`",
-                        value=e,
-                        inline=False
-                    )
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
     @upgrade_cogs.autocomplete('cog')
