@@ -30,12 +30,7 @@ class GlobalCommands(commands.Cog):
             if server == 'minecraft':
                 server = JavaServer.lookup("192.168.99.49:28871")
                 status = server.status()
-
-                query = server.query()
-                print(f"Players Online: {', '.join(query.players.names)}")
-
                 await interaction.response.send_message('SkynetMC has {0} players and replied in {1} ms'.format(status.players.online, status.latency), ephemeral=False)
-                await interaction.response.send_message(f"Players Online: {', '.join(query.players.names)}", ephemeral=False)
 
     @online_command.autocomplete('server')
     async def reload_cogs_autocomplete(self, interaction: discord.Interaction, current: str

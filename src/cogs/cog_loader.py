@@ -148,7 +148,7 @@ class CogLoader(commands.Cog):
         else:
             # upgrade the specific cog
             embed = discord.Embed(
-                title=f"Upgrading {cog} cog!",
+                title=f"Upgraded {cog} cog!",
                 color=0x808080
             )
             ext = f"{cog.lower()}.py"
