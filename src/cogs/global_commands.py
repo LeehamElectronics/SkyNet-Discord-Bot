@@ -28,7 +28,7 @@ class GlobalCommands(commands.Cog):
             pass
         else:
             if server == 'minecraft':
-                server = MinecraftServer.lookup("192.168.99.49:28871")
+                server = JavaServer.lookup("192.168.99.49:28871")
                 status = server.status()
                 await interaction.response.send_message('SkynetMC has {0} players and replied in {1} ms'.format(status.players.online, status.latency), ephemeral=True)
 
