@@ -26,13 +26,13 @@ class WatchtowerCommands(commands.Cog):
             await interaction.response.send_message('Please type a command argument', ephemeral=True)
         else:
             if action == 'start':
-                await interaction.response.send_message('Starting WT', ephemeral=True)
+                await interaction.response.send_message('Starting WT', ephemeral=False)
                 category = discord.utils.get(interaction.guild.categories, id=698306289473814550)
                 role = interaction.guild.get_role(543039798668034048)
                 await self.watchtower_chat_channel.send(f'{interaction.user.name} is Starting the WT')
                 await category.set_permissions(role, read_messages=True, send_messages=True, connect=True, speak=True, view_channel=True)
             elif action == 'stop':
-                await interaction.response.send_message('Stopping WT', ephemeral=True)
+                await interaction.response.send_message('Stopping WT', ephemeral=False)
                 category = discord.utils.get(interaction.guild.categories, id=698306289473814550)
                 role = interaction.guild.get_role(543039798668034048)
                 await self.watchtower_chat_channel.send(f'{interaction.user.name} is Stopping the WT')
