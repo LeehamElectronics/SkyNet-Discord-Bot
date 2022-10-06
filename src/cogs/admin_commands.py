@@ -40,11 +40,11 @@ class AdminCommands(commands.Cog):
         elif discord_user is None:
             # only verify MC username
             await interaction.response.send_message(f'Verifying {mc_username} ({name}) on the MC server...', ephemeral=True)
-            await self.error_log_channel.send(f'verify {mc_username} {name}')
+            await self.bungee_lobby_console_channel.send(f'verify {mc_username} {name}')
         else:
             # verify both discord and MC accounts and link them together!
             await interaction.response.send_message(f'Verifying {discord_user.mention} ({name}) on Discord and {mc_username} on MC', ephemeral=True)
-            await self.error_log_channel.send(f'verify {mc_username} {name}')
+            await self.bungee_lobby_console_channel.send(f'verify {mc_username} {name}')
 
     # error handler
     async def on_app_command_error(self, interaction: Interaction, error: AppCommandError):
