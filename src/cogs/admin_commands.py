@@ -33,7 +33,7 @@ class AdminCommands(commands.Cog):
             # only verify Discord member
             member_role = get(interaction.guild.roles, id=543039798668034048)
             if member_role in discord_user.roles:
-                await interaction.response.send_message(f'{discord_user.mention} ({name}) is already verified!', ephemeral=True)
+                await interaction.response.send_message(f'{discord_user.mention} ({name}) is already verified on Discord!', ephemeral=True)
             else:
                 await interaction.response.send_message(f'Verifying {discord_user.mention} ({name}) on Discord...', ephemeral=True)
                 await discord_user.add_roles(member_role)
@@ -49,9 +49,8 @@ class AdminCommands(commands.Cog):
 
             member_role = get(interaction.guild.roles, id=543039798668034048)
             if member_role in discord_user.roles:
-                await interaction.response.send_message(f'{discord_user.mention} ({name}) is already verified!', ephemeral=True)
+                await interaction.followup.send(f'{discord_user.mention} ({name}) is already verified on Discord!', ephemeral=True)
             else:
-                await interaction.response.send_message(f'Verifying {discord_user.mention} ({name}) on Discord...', ephemeral=True)
                 await discord_user.add_roles(member_role)
             await discord_user.edit(nick=name)
 
