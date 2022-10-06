@@ -22,7 +22,7 @@ class AdminCommands(commands.Cog):
 
     @app_commands.checks.has_any_role('Owner', 'Admin')
     @app_commands.command(name="verify", description="verify user into server")
-    async def verify_user_command(self, interaction: discord.Interaction, user: discord.Member) -> None:
+    async def verify_user_command(self, interaction: discord.Interaction, verify_type: str, user: discord.Member) -> None:
         if not user:
             await interaction.response.send_message('What User?', ephemeral=True)
         else:
@@ -30,7 +30,7 @@ class AdminCommands(commands.Cog):
             if member_role in user.roles:
                 await interaction.response.send_message(f'This user is already verified!', ephemeral=True)
             else:
-                await interaction.response.send_message(f'Verifying Member...', ephemeral=True)
+                await interaction.response.send_message(f'Verifying Member on {verify_type}...', ephemeral=True)
                 await user.add_roles(member_role)
 
     # error handler
