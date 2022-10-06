@@ -17,6 +17,7 @@ class AdminCommands(commands.Cog):
         self.bot = bot
         bot.tree.on_error = self.on_app_command_error
         self.error_log_channel = self.bot.get_channel(configuration.ChannelObjects.discord_timing_channel_id)
+        self.bungee_lobby_console_channel = self.bot.get_channel(725254735233286174)
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -24,7 +25,7 @@ class AdminCommands(commands.Cog):
 
     @app_commands.checks.has_any_role('Owner', 'Admin')
     @app_commands.command(name="verify", description="verify user into server")
-    async def verify_user_command(self, interaction: discord.Interaction, discord_user: typing.Optional[discord.Member] = None, mc_username: typing.Optional[str] = None) -> None:
+    async def verify_user_command(self, interaction: discord.Interaction, name: str, discord_user: typing.Optional[discord.Member] = None, mc_username: typing.Optional[str] = None) -> None:
         if not discord_user and not mc_username:
             await interaction.response.send_message('Please specify a discord or MC username or both', ephemeral=True)
 
@@ -32,16 +33,18 @@ class AdminCommands(commands.Cog):
             # only verify Discord member
             member_role = get(interaction.guild.roles, id=543039798668034048)
             if member_role in discord_user.roles:
-                await interaction.response.send_message(f'{discord_user.mention} is already verified!', ephemeral=True)
+                await interaction.response.send_message(f'{discord_user.mention} ({name}) is already verified!', ephemeral=True)
             else:
-                await interaction.response.send_message(f'Verifying {discord_user.mention} on Discord...', ephemeral=True)
+                await interaction.response.send_message(f'Verifying {discord_user.mention} ({name}) on Discord...', ephemeral=True)
                 await discord_user.add_roles(member_role)
         elif discord_user is None:
             # only verify MC username
-            await interaction.response.send_message(f'Verifying {mc_username} on the MC server...', ephemeral=True)
+            await interaction.response.send_message(f'Verifying {mc_username} ({name}) on the MC server...', ephemeral=True)
+            await self.error_log_channel.send(f'verify {mc_username} {name}')
         else:
             # verify both discord and MC accounts and link them together!
-            await interaction.response.send_message(f'Verifying {discord_user.mention} on Discord and {mc_username} on MC', ephemeral=True)
+            await interaction.response.send_message(f'Verifying {discord_user.mention} ({name}) on Discord and {mc_username} on MC', ephemeral=True)
+            await self.error_log_channel.send(f'verify {mc_username} {name}')
 
     # error handler
     async def on_app_command_error(self, interaction: Interaction, error: AppCommandError):
