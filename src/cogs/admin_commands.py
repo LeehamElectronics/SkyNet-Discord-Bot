@@ -37,6 +37,7 @@ class AdminCommands(commands.Cog):
             else:
                 await interaction.response.send_message(f'Verifying {discord_user.mention} ({name}) on Discord...', ephemeral=True)
                 await discord_user.add_roles(member_role)
+            await discord_user.edit(nick=name)
         elif discord_user is None:
             # only verify MC username
             await interaction.response.send_message(f'Verifying {mc_username} ({name}) on the MC server...', ephemeral=True)
@@ -52,6 +53,7 @@ class AdminCommands(commands.Cog):
             else:
                 await interaction.response.send_message(f'Verifying {discord_user.mention} ({name}) on Discord...', ephemeral=True)
                 await discord_user.add_roles(member_role)
+            await discord_user.edit(nick=name)
 
     # error handler
     async def on_app_command_error(self, interaction: Interaction, error: AppCommandError):
