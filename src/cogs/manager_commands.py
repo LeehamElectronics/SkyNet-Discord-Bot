@@ -17,6 +17,7 @@ class ManagerCommands(commands.Cog):
         bot.tree.on_error = self.on_app_command_error
         self.error_log_channel = self.bot.get_channel(configuration.ChannelObjects.discord_timing_channel_id)
         self.mod_log_channel = self.bot.get_channel(configuration.ChannelObjects.mod_log_channel_id)
+        self.memes_channel = self.bot.get_channel(configuration.ChannelObjects.memes_channel_id)
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -120,10 +121,58 @@ class ManagerCommands(commands.Cog):
             for mute_type in mute_types if mute_type.lower() in mute_type.lower()
         ]
 
+    @app_commands.checks.has_any_role('Owner', 'Admin', 'Moderator')
+    @app_commands.command(name="bubblewrap", description="mute a member")
+    async def bubblewrap_command(self, interaction: discord.Interaction, member: discord.Member, status: bool) -> None:
+        if not member:
+            await interaction.response.send_message('What Member?', ephemeral=True)
+            return
+
+        owner_role = interaction.guild.get_role(configuration.RoleIDObjects.owner_role_id)
+        admin_role = interaction.guild.get_role(configuration.RoleIDObjects.admin_role_id)
+        mod_role = interaction.guild.get_role(configuration.RoleIDObjects.mod_role_id)
+        bubblewraped_role = interaction.guild.get_role(1034728199994740776)
+
+        # check if member is an mod, admin, or owner
+        members_roles = member.roles
+        super_roles = [owner_role, admin_role, mod_role]
+        for super_role in super_roles:
+            if super_role in members_roles:
+                # cancel this mute command because the member has super roles
+                await interaction.response.send_message('Sorry but this Member can not be Bubblewraped', ephemeral=True)
+                return
+        if status:
+            # enable bubblewrap
+            await member.add_roles(bubblewraped_role)
+            await self.memes_channel.set_permissions(member, view_channel=False)
+            embed = discord.Embed(title="User Bubblewraped!",
+                                  description="**{0}** was bubblewraped by **{1}**!".format(member, interaction.user,),
+                                  color=0xff00f6)
+        else:
+            # disable bubblewrap
+            await member.remove_roles(bubblewraped_role)
+            await self.memes_channel.set_permissions(member, view_channel=True)
+            embed = discord.Embed(title="User no longer Bubblewraped!",
+                                  description="**{0}** had their bubblewrap removed by **{1}**!".format(member, interaction.user, ),
+                                  color=0xff00f6)
+
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+        await self.mod_log_channel.send(embed=embed)
+
+    @mute_command.autocomplete('mute_type')
+    async def mute_command_type_autocomplete(self, interaction: discord.Interaction, mute_type: str
+                                       ) -> list[app_commands.Choice[str]]:
+        mute_types = ['voice', 'chat']
+        return [
+            app_commands.Choice(name=mute_type, value=mute_type)
+            for mute_type in mute_types if mute_type.lower() in mute_type.lower()
+        ]
+
     # error handler
     async def on_app_command_error(self, interaction: Interaction, error: AppCommandError):
         embed = diagnostics.log_error('severe', 'command', 'Command failed to run', str(error), 'manager_commands.py')
         await self.error_log_channel.send(embed=embed)
+
 
 
 async def setup(bot: commands.Bot) -> None:
