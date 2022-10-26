@@ -55,7 +55,7 @@ class ManagerCommands(commands.Cog):
 
         # check if member is an mod, admin, or owner
         members_roles = member.roles
-        super_roles = [owner_role, admin_role, mod_role, muted_role]
+        super_roles = [owner_role, admin_role, mod_role]
         for super_role in super_roles:
             if super_role in members_roles:
                 # cancel this mute command because the member has super roles
@@ -69,7 +69,7 @@ class ManagerCommands(commands.Cog):
         await interaction.response.send_message(embed=embed, ephemeral=True)
         await self.mod_log_channel.send(embed=embed)
 
-        await asyncio.sleep(mute_time)
+        await asyncio.sleep(int(mute_time * 60))
         await member.remove_roles(muted_role)
 
     @app_commands.checks.has_any_role('Owner', 'Admin', 'Moderator')
