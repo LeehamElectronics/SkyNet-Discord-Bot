@@ -1,3 +1,5 @@
+import asyncio
+
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -14,6 +16,7 @@ class ManagerCommands(commands.Cog):
         self.bot = bot
         bot.tree.on_error = self.on_app_command_error
         self.error_log_channel = self.bot.get_channel(configuration.ChannelObjects.discord_timing_channel_id)
+        self.mod_log_channel = self.bot.get_channel(configuration.ChannelObjects.mod_log_channel_id)
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -37,9 +40,12 @@ class ManagerCommands(commands.Cog):
 
     @app_commands.checks.has_any_role('Owner', 'Admin', 'Moderator')
     @app_commands.command(name="mute", description="mute a member")
-    async def mute_command(self, interaction: discord.Interaction, member: discord.Member) -> None:
+    async def mute_command(self, interaction: discord.Interaction, member: discord.Member, mute_time: int) -> None:
         if not member:
             await interaction.response.send_message('What Member?', ephemeral=True)
+            return
+        if not mute_time:
+            await interaction.response.send_message('For how long?', ephemeral=True)
             return
 
         owner_role = interaction.guild.get_role(configuration.RoleIDObjects.owner_role_id)
@@ -58,9 +64,13 @@ class ManagerCommands(commands.Cog):
 
         await member.add_roles(muted_role)
         embed = discord.Embed(title="User Muted!",
-                              description="**{0}** was muted by **{1}**!".format(member, interaction.user),
+                              description="**{0}** was muted by **{1}** for {2} minutes!".format(member, interaction.user, mute_time),
                               color=0xff00f6)
         await interaction.response.send_message(embed=embed, ephemeral=True)
+        await self.mod_log_channel.send(embed=embed)
+
+        await asyncio.sleep(mute_time)
+        await member.remove_roles(muted_role)
 
     @app_commands.checks.has_any_role('Owner', 'Admin', 'Moderator')
     @app_commands.command(name="unmute", description="unmute a member")
