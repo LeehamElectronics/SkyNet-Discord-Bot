@@ -40,7 +40,7 @@ class ManagerCommands(commands.Cog):
 
     @app_commands.checks.has_any_role('Owner', 'Admin', 'Moderator')
     @app_commands.command(name="mute", description="mute a member")
-    async def mute_command(self, interaction: discord.Interaction, member: discord.Member, mute_time: int) -> None:
+    async def mute_command(self, interaction: discord.Interaction, member: discord.Member, mute_time: int, mute_type: str) -> None:
         if not member:
             await interaction.response.send_message('What Member?', ephemeral=True)
             return
@@ -52,6 +52,7 @@ class ManagerCommands(commands.Cog):
         admin_role = interaction.guild.get_role(configuration.RoleIDObjects.admin_role_id)
         mod_role = interaction.guild.get_role(configuration.RoleIDObjects.mod_role_id)
         muted_role = interaction.guild.get_role(configuration.RoleIDObjects.chat_muted_role_id)
+        voice_muted_role = interaction.guild.get_role(1034705488467734548)
 
         # check if member is an mod, admin, or owner
         members_roles = member.roles
@@ -61,29 +62,63 @@ class ManagerCommands(commands.Cog):
                 # cancel this mute command because the member has super roles
                 await interaction.response.send_message('Sorry but this Member can not be muted', ephemeral=True)
                 return
+        if mute_type == 'voice':
+            await member.add_roles(voice_muted_role)
+            embed = discord.Embed(title="User Muted!",
+                                  description="**{0}** was voice muted by **{1}** for {2} minutes!".format(member,
+                                                                                                     interaction.user,
+                                                                                                     mute_time),
+                                  color=0xff00f6)
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            await self.mod_log_channel.send(embed=embed)
 
-        await member.add_roles(muted_role)
-        embed = discord.Embed(title="User Muted!",
-                              description="**{0}** was muted by **{1}** for {2} minutes!".format(member, interaction.user, mute_time),
-                              color=0xff00f6)
-        await interaction.response.send_message(embed=embed, ephemeral=True)
-        await self.mod_log_channel.send(embed=embed)
+            await asyncio.sleep(int(mute_time * 60))
+            await member.remove_roles(voice_muted_role)
+        else:
+            await member.add_roles(muted_role)
+            embed = discord.Embed(title="User Chat Muted!",
+                                  description="**{0}** was chat muted by **{1}** for {2} minutes!".format(member, interaction.user, mute_time),
+                                  color=0xff00f6)
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+            await self.mod_log_channel.send(embed=embed)
 
-        await asyncio.sleep(int(mute_time * 60))
-        await member.remove_roles(muted_role)
+            await asyncio.sleep(int(mute_time * 60))
+            await member.remove_roles(muted_role)
+
+    @mute_command.autocomplete('mute_type')
+    async def mute_command_type_autocomplete(self, interaction: discord.Interaction, mute_type: str
+                                       ) -> list[app_commands.Choice[str]]:
+        mute_types = ['voice', 'chat']
+        return [
+            app_commands.Choice(name=mute_type, value=mute_type)
+            for mute_type in mute_types if mute_type.lower() in mute_type.lower()
+        ]
 
     @app_commands.checks.has_any_role('Owner', 'Admin', 'Moderator')
     @app_commands.command(name="unmute", description="unmute a member")
-    async def unmute_command(self, interaction: discord.Interaction, member: discord.Member) -> None:
+    async def unmute_command(self, interaction: discord.Interaction, member: discord.Member, mute_type: str) -> None:
         if not member:
             await interaction.response.send_message('What Member?', ephemeral=True)
         else:
             muted_role = interaction.guild.get_role(configuration.RoleIDObjects.chat_muted_role_id)
-            await member.remove_roles(muted_role)
-            embed = discord.Embed(title="User no longer Muted!",
-                                  description="**{0}** was unmuted by **{1}**!".format(member, interaction.user),
+            voice_muted_role = interaction.guild.get_role(1034705488467734548)
+            if mute_type == 'voice':
+                await member.remove_roles(voice_muted_role)
+            else:
+                await member.remove_roles(muted_role)
+            embed = discord.Embed(title=f"User no longer {mute_type} Muted!",
+                                  description="**{0}** was {1} unmuted by **{2}**!".format(member, mute_type, interaction.user),
                                   color=0xff00f6)
             await interaction.response.send_message(embed=embed, ephemeral=True)
+
+    @unmute_command.autocomplete('mute_type')
+    async def unmute_command_type_autocomplete(self, interaction: discord.Interaction, mute_type: str
+                                       ) -> list[app_commands.Choice[str]]:
+        mute_types = ['voice', 'chat']
+        return [
+            app_commands.Choice(name=mute_type, value=mute_type)
+            for mute_type in mute_types if mute_type.lower() in mute_type.lower()
+        ]
 
     # error handler
     async def on_app_command_error(self, interaction: Interaction, error: AppCommandError):
