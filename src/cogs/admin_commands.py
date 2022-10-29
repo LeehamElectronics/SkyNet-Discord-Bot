@@ -73,6 +73,7 @@ class AdminCommands(commands.Cog):
             with open(f'cogs/{file}.py', 'r') as f:
                 code_lines = f.readlines()
                 code_snippet = code_lines[start:end]
+                code_snippet = ''.join(map(str, code_snippet))
                 if len(code_snippet) > 1900:
                     code_snippet = code_snippet[0:1900]
         except Exception as error:
