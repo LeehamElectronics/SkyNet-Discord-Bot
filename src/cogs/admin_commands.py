@@ -64,13 +64,13 @@ class AdminCommands(commands.Cog):
                 f'Please use {self.bot_spam_channel.mention} for bot commands!', ephemeral=True)
         try:
             with open(f'cogs/{file}.py', 'r') as f:
-                code_string = f
+                code_string = f.read()
         except Exception as error:
             interaction.response(f'failed to show code! Check {self.error_log_channel.mention} for more info.')
             embed = diagnostics.log_error('severe', 'command', 'showcode command failed to run', str(error), 'admin_commands.py')
             await self.error_log_channel.send(embed=embed)
             return
-        await interaction.response.send_message(f''
+        await interaction.response.send_message(f'{file}.py file contents:'
                                                 f'```py'
                                                 f'{code_string}'
                                                 f'```', ephemeral=False)
