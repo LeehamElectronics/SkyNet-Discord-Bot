@@ -122,9 +122,17 @@ class MessageEvents(commands.Cog):
 
         await self.all_message_log_channel.send(embed=embed)
 
-        if inappropriate_probability > .75:
-            await message.delete()
-            await self.rule_breaker_log_channel.send(embed=embed)
+        # if message was sent to general channels, enforce stronger language check. This
+        # is done because bubble-wrapped members can only see general channels.
+        general_txt_channel_ids = [configuration.ChannelObjects.bot_channel_id, configuration.ChannelObjects.general_channel_id, 725267728943939611]
+        if message.channel.id in general_txt_channel_ids:
+            if inappropriate_probability > .75:
+                await message.delete()
+                await self.rule_breaker_log_channel.send(embed=embed)
+        else:
+            if inappropriate_probability > .95:
+                await message.delete()
+                await self.rule_breaker_log_channel.send(embed=embed)
 
         # levelling and statistics code
         added_exp = random.randint(1, 8)  # Generate random XP value...
