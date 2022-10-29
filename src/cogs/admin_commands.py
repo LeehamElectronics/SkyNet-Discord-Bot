@@ -77,7 +77,7 @@ class AdminCommands(commands.Cog):
             embed = diagnostics.log_error('severe', 'command', 'showcode command failed to run', str(error), 'admin_commands.py')
             await self.error_log_channel.send(embed=embed)
             return
-        await interaction.response.send_message(f'{file}.py file contents:'
+        await interaction.response.send_message(f'**{file}.py file contents** (2000 character limit sadly):'
                                                 f'```py\n'
                                                 f'{code_string}\n'
                                                 f'```', ephemeral=False)
