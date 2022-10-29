@@ -9,7 +9,7 @@ from discord.utils import get
 from discord.app_commands import AppCommandError
 import diagnostics as diagnostics
 import configuration as configuration
-from pastebin import PastebinAPI
+# from pastebin import PastebinAPI
 
 
 # verify user command
