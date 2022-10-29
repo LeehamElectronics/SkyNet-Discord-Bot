@@ -21,6 +21,10 @@ class ManagerCommands(commands.Cog):
         self.theocratic_channel = self.bot.get_channel(configuration.ChannelObjects.theocratic_channel_id)
         self.tech_channel = self.bot.get_channel(784976527447293962)
 
+        # voice channels
+        self.lounge_one_vc_channel = self.bot.get_channel(1035470361782919178)
+        self.lounge_two_vc_channel = self.bot.get_channel(1035489990899138560)
+
     @commands.Cog.listener()
     async def on_ready(self):
         print(f"{self.__class__.__name__} Cog has been loaded\n-----")
@@ -124,7 +128,7 @@ class ManagerCommands(commands.Cog):
         ]
 
     @app_commands.checks.has_any_role('Owner', 'Admin', 'Moderator')
-    @app_commands.command(name="bubblewrap", description="mute a member")
+    @app_commands.command(name="bubblewrap", description="bubble-wrap a member")
     async def bubblewrap_command(self, interaction: discord.Interaction, member: discord.Member, status: bool) -> None:
         if not member:
             await interaction.response.send_message('What Member?', ephemeral=True)
@@ -149,6 +153,8 @@ class ManagerCommands(commands.Cog):
             await self.memes_channel.set_permissions(member, view_channel=False)
             await self.theocratic_channel.set_permissions(member, view_channel=False)
             await self.tech_channel.set_permissions(member, view_channel=False)
+            await self.lounge_one_vc_channel.set_permissions(member, view_channel=False)
+            await self.lounge_two_vc_channel.set_permissions(member, view_channel=False)
             embed = discord.Embed(title="User Bubblewraped!",
                                   description="**{0}** was bubblewraped by **{1}**!".format(member, interaction.user,),
                                   color=0xff00f6)
@@ -158,12 +164,53 @@ class ManagerCommands(commands.Cog):
             await self.memes_channel.set_permissions(member, view_channel=True)
             await self.theocratic_channel.set_permissions(member, view_channel=True)
             await self.tech_channel.set_permissions(member, view_channel=True)
+            await self.lounge_one_vc_channel.set_permissions(member, view_channel=True)
+            await self.lounge_two_vc_channel.set_permissions(member, view_channel=True)
             embed = discord.Embed(title="User no longer Bubblewraped!",
                                   description="**{0}** had their bubblewrap removed by **{1}**!".format(member, interaction.user, ),
                                   color=0xff00f6)
 
         await interaction.response.send_message(embed=embed, ephemeral=True)
         await self.mod_log_channel.send(embed=embed)
+
+    # goes through a list of already bubble-wrapped members and updates their permissions
+    @app_commands.checks.has_any_role('Owner', 'Admin')
+    @app_commands.command(name="re-bubblewrap-all", description="goes through a list of already bubble-wrapped members and updates their permissions")
+    async def rebubblewrap_command(self, interaction: discord.Interaction) -> None:
+
+        owner_role = interaction.guild.get_role(configuration.RoleIDObjects.owner_role_id)
+        admin_role = interaction.guild.get_role(configuration.RoleIDObjects.admin_role_id)
+        mod_role = interaction.guild.get_role(configuration.RoleIDObjects.mod_role_id)
+        bubblewraped_role = interaction.guild.get_role(1034728199994740776)
+
+        for member in interaction.guild.members:
+            if bubblewraped_role in member.roles:
+                await member.add_roles(bubblewraped_role)
+                await self.memes_channel.set_permissions(member, view_channel=False)
+                await self.theocratic_channel.set_permissions(member, view_channel=False)
+                await self.tech_channel.set_permissions(member, view_channel=False)
+                await self.lounge_one_vc_channel.set_permissions(member, view_channel=False)
+                await self.lounge_two_vc_channel.set_permissions(member, view_channel=False)
+                embed = discord.Embed(title="User re-bubblewraped!",
+                                      description="**{0}** was re-bubblewraped by **{1}**!".format(member, interaction.user, ),
+                                      color=0xff00f6)
+                await self.mod_log_channel.send(embed=embed)
+
+            else:
+                # disable bubblewrap
+                await member.remove_roles(bubblewraped_role)
+                await self.memes_channel.set_permissions(member, view_channel=True)
+                await self.theocratic_channel.set_permissions(member, view_channel=True)
+                await self.tech_channel.set_permissions(member, view_channel=True)
+                await self.lounge_one_vc_channel.set_permissions(member, view_channel=True)
+                await self.lounge_two_vc_channel.set_permissions(member, view_channel=True)
+                embed = discord.Embed(title="User no longer Bubblewraped!",
+                                      description="**{0}** had their bubblewrap removed by **{1}**!".format(member,
+                                                                                                            interaction.user, ),
+                                      color=0xff00f6)
+                await self.mod_log_channel.send(embed=embed)
+
+        await interaction.response.send_message('re-wrapped everyone!', ephemeral=True)
 
     @mute_command.autocomplete('mute_type')
     async def mute_command_type_autocomplete(self, interaction: discord.Interaction, mute_type: str
