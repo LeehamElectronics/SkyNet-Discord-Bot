@@ -1,3 +1,4 @@
+import os
 import typing
 
 import discord
@@ -18,6 +19,7 @@ class AdminCommands(commands.Cog):
         bot.tree.on_error = self.on_app_command_error
         self.error_log_channel = self.bot.get_channel(configuration.ChannelObjects.discord_timing_channel_id)
         self.bungee_lobby_console_channel = self.bot.get_channel(725254735233286174)
+        self.bot_spam_channel = self.bot.get_channel(configuration.ChannelObjects.bot_channel_id)
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -53,6 +55,41 @@ class AdminCommands(commands.Cog):
             else:
                 await discord_user.add_roles(member_role)
             await discord_user.edit(nick=name)
+
+    @app_commands.checks.has_any_role('Owner', 'Admin')
+    @app_commands.command(name="showcode", description="print out the discord bots code!")
+    async def show_code_command(self, interaction: discord.Interaction, file: str):
+        if interaction.channel is not self.bot_spam_channel:
+            await interaction.response.send_message(
+                f'Please use {self.bot_spam_channel.mention} for bot commands!', ephemeral=True)
+        try:
+            with open(f'cogs/{file}.py', 'r') as f:
+                code_string = f
+        except Exception as error:
+            interaction.response(f'failed to show code! Check {self.error_log_channel.mention} for more info.')
+            embed = diagnostics.log_error('severe', 'command', 'showcode command failed to run', str(error), 'admin_commands.py')
+            await self.error_log_channel.send(embed=embed)
+            return
+        await interaction.response.send_message(f''
+                                                f'```py'
+                                                f'{code_string}'
+                                                f'```', ephemeral=False)
+
+    @show_code_command.autocomplete('file')
+    async def reload_cogs_autocomplete(self, interaction: discord.Interaction, file: str
+    ) -> list[app_commands.Choice[str]]:
+        # cogs = ['cog_loader', 'invite', 'guild_setup_handler', 'message_events', 'lab_commands', 'manager_commands', 'admin_commands', 'owner_commands', 'watchtower_commands', 'all']
+        self.list_of_cogs = []
+        for ext in os.listdir("cogs"):
+            if ext.endswith(".py") and not ext.startswith("_"):
+                self.list_of_cogs.append(ext[:-3])
+        self.list_of_cogs.append('all')
+
+        cogs = self.list_of_cogs
+        return [
+            app_commands.Choice(name=cog, value=cog)
+            for cog in cogs if file.lower() in cog.lower()
+        ]
 
     # error handler
     async def on_app_command_error(self, interaction: Interaction, error: AppCommandError):
