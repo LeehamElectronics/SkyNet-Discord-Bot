@@ -68,6 +68,7 @@ class AdminCommands(commands.Cog):
         if interaction.channel is not self.bot_spam_channel:
             await interaction.response.send_message(
                 f'Please use {self.bot_spam_channel.mention} for bot commands!', ephemeral=True)
+            return
         try:
             with open(f'cogs/{file}.py', 'r') as f:
                 code_string = f.read(1900)
@@ -77,8 +78,8 @@ class AdminCommands(commands.Cog):
             await self.error_log_channel.send(embed=embed)
             return
         await interaction.response.send_message(f'{file}.py file contents:'
-                                                f'```py'
-                                                f'{code_string}'
+                                                f'```py\n'
+                                                f'{code_string}\n'
                                                 f'```', ephemeral=False)
         if len(code_string) >= 1899:
             pass
