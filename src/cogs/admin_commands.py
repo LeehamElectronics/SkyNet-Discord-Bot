@@ -9,6 +9,7 @@ from discord.utils import get
 from discord.app_commands import AppCommandError
 import diagnostics as diagnostics
 import configuration as configuration
+from pastebin import PastebinAPI
 
 
 # verify user command
@@ -20,6 +21,11 @@ class AdminCommands(commands.Cog):
         self.error_log_channel = self.bot.get_channel(configuration.ChannelObjects.discord_timing_channel_id)
         self.bungee_lobby_console_channel = self.bot.get_channel(725254735233286174)
         self.bot_spam_channel = self.bot.get_channel(configuration.ChannelObjects.bot_channel_id)
+
+        self.api_dev_key = ''
+        pastebin_username = ''
+        pastebin_password = ''
+        # self.pastebin_key = PastebinAPI.generate_user_key(self.api_dev_key, pastebin_username, pastebin_password)
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -64,7 +70,7 @@ class AdminCommands(commands.Cog):
                 f'Please use {self.bot_spam_channel.mention} for bot commands!', ephemeral=True)
         try:
             with open(f'cogs/{file}.py', 'r') as f:
-                code_string = f.read()
+                code_string = f.read(1900)
         except Exception as error:
             interaction.response(f'failed to show code! Check {self.error_log_channel.mention} for more info.')
             embed = diagnostics.log_error('severe', 'command', 'showcode command failed to run', str(error), 'admin_commands.py')
@@ -74,6 +80,9 @@ class AdminCommands(commands.Cog):
                                                 f'```py'
                                                 f'{code_string}'
                                                 f'```', ephemeral=False)
+        if len(code_string) >= 1899:
+            pass
+            # PastebinAPI.paste(self.api_dev_key, api_paste_code, api_user_key = None, paste_name = None, paste_format = None, paste_private = None, paste_expire_date = None)
 
     @show_code_command.autocomplete('file')
     async def reload_cogs_autocomplete(self, interaction: discord.Interaction, file: str
