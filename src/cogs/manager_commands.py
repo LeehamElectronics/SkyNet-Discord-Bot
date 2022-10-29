@@ -186,8 +186,8 @@ class ManagerCommands(commands.Cog):
                 await self.memes_channel.set_permissions(member, view_channel=False)
                 await self.theocratic_channel.set_permissions(member, view_channel=False)
                 await self.tech_channel.set_permissions(member, view_channel=False)
-                await self.lounge_one_vc_channel.set_permissions(member, view_channel=False)
-                await self.lounge_two_vc_channel.set_permissions(member, view_channel=False)
+                await self.lounge_one_vc_channel.set_permissions(member, view_channel=True, connect=False)
+                await self.lounge_two_vc_channel.set_permissions(member, view_channel=True, connect=False)
                 embed = discord.Embed(title="User re-bubblewraped!",
                                       description="**{0}** was re-bubblewraped by **{1}**!".format(member, interaction.user, ),
                                       color=0xff00f6)
@@ -207,7 +207,7 @@ class ManagerCommands(commands.Cog):
 
     # error handler
     async def on_app_command_error(self, interaction: Interaction, error: AppCommandError):
-        embed = diagnostics.log_error('severe', 'command', 'Command failed to run', str(error), 'manager_commands.py')
+        embed = diagnostics.log_error('severe', 'command', 'Command failed to run', str(error), str(interaction.user.name), 'manager_commands.py')
         await self.error_log_channel.send(embed=embed)
 
 

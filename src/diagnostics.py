@@ -18,7 +18,7 @@ class LoggingColors:
     UNDERLINE = '\033[4m'
 
 
-def log_error(severity: str, error_type: str, message: str, trace_message: str, *args):
+def log_error(severity: str, error_type: str, message: str, trace_message: str, user: str, *args):
     # severity is a string such as 'severe' or 'minor'
     # error_type can be 'functional' or 'database'
     # message is a custom string describing the error
@@ -43,4 +43,5 @@ def log_error(severity: str, error_type: str, message: str, trace_message: str, 
         embed.set_author(name='Skynet Logging', icon_url=image_links['skynet_s_logo_broken'])
         embed.add_field(name="Cog", value=f'{cog_name}')
         embed.add_field(name="Trace", value=f'{trace_message}')
+        embed.add_field(name="User", value=f'{user}')
         return embed
