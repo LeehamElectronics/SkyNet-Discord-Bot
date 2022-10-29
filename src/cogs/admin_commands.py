@@ -64,14 +64,17 @@ class AdminCommands(commands.Cog):
 
     @app_commands.checks.has_any_role('Owner', 'Admin')
     @app_commands.command(name="showcode", description="print out the discord bots code!")
-    async def show_code_command(self, interaction: discord.Interaction, file: str):
+    async def show_code_command(self, interaction: discord.Interaction, file: str, start: int, end: int):
         if interaction.channel is not self.bot_spam_channel:
             await interaction.response.send_message(
                 f'Please use {self.bot_spam_channel.mention} for bot commands!', ephemeral=True)
             return
         try:
             with open(f'cogs/{file}.py', 'r') as f:
-                code_string = f.read(1900)
+                code_lines = f.readlines()
+                code_snippet = code_lines[start:end]
+                if len(code_snippet) > 1900:
+                    code_snippet = code_snippet[0:1900]
         except Exception as error:
             interaction.response(f'failed to show code! Check {self.error_log_channel.mention} for more info.')
             embed = diagnostics.log_error('severe', 'command', 'showcode command failed to run', str(error), 'admin_commands.py')
@@ -79,9 +82,9 @@ class AdminCommands(commands.Cog):
             return
         await interaction.response.send_message(f'**{file}.py file contents** (2000 character limit sadly):'
                                                 f'```py\n'
-                                                f'{code_string}\n'
+                                                f'{code_snippet}\n'
                                                 f'```', ephemeral=False)
-        if len(code_string) >= 1899:
+        if len(code_snippet) >= 1899:
             pass
             # PastebinAPI.paste(self.api_dev_key, api_paste_code, api_user_key = None, paste_name = None, paste_format = None, paste_private = None, paste_expire_date = None)
 
