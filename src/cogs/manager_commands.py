@@ -1,4 +1,5 @@
 import asyncio
+import typing
 
 import discord
 from discord import app_commands
@@ -31,10 +32,16 @@ class ManagerCommands(commands.Cog):
 
     @app_commands.checks.has_permissions(manage_messages=True)
     @app_commands.command(name="clear", description="clear channel messages")
-    async def clear_command(self, interaction: discord.Interaction, messages: int) -> None:
+    async def clear_command(self, interaction: discord.Interaction, messages: int, discord_user: typing.Optional[discord.Member] = None) -> None:
+        def is_user(req_user):
+            return req_user.author == discord_user
         if not messages:
-            await interaction.response.send_message('Clearing 10 messages', ephemeral=True)
-            await interaction.channel.purge(limit=10)
+            if not discord_user:
+                await interaction.response.send_message('Clearing 10 messages', ephemeral=True)
+                await interaction.channel.purge(limit=10)
+            else:
+                await interaction.response.send_message(f'Clearing 10 messages from {discord_user.mention}', ephemeral=True)
+                await interaction.channel.purge(limit=10, check=is_user)
         else:
             val = messages
             try:
@@ -42,8 +49,13 @@ class ManagerCommands(commands.Cog):
             except Exception as error:
                 await interaction.response.send_message(f"That's not a number...", ephemeral=True)
                 return
-            await interaction.response.send_message(f'Clearing {messages} messages', ephemeral=True)
-            await interaction.channel.purge(limit=messages)
+            if not discord_user:
+                await interaction.response.send_message(f'Clearing {messages} messages', ephemeral=True)
+                await interaction.channel.purge(limit=messages)
+            else:
+                await interaction.response.send_message(f'Clearing {messages} messages from {discord_user.mention}',
+                                                        ephemeral=True)
+                await interaction.channel.purge(limit=messages, check=is_user)
 
     @app_commands.checks.has_any_role('Owner', 'Admin', 'Moderator')
     @app_commands.command(name="mute", description="mute a member")
