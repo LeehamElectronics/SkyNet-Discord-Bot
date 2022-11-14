@@ -21,6 +21,7 @@ class AdminCommands(commands.Cog):
         self.error_log_channel = self.bot.get_channel(configuration.ChannelObjects.discord_timing_channel_id)
         self.bungee_lobby_console_channel = self.bot.get_channel(725254735233286174)
         self.bot_spam_channel = self.bot.get_channel(configuration.ChannelObjects.bot_channel_id)
+        self.the_people_channel = self.bot.get_channel(784978082653405195)
 
         self.api_dev_key = ''
         pastebin_username = ''
@@ -45,6 +46,8 @@ class AdminCommands(commands.Cog):
             else:
                 await interaction.response.send_message(f'Verifying {discord_user.mention} ({name}) on Discord...', ephemeral=True)
                 await discord_user.add_roles(member_role)
+                await self.the_people_channel.send(
+                    f'{discord_user.mention} has been added to the Discord server. Please read the rules first!')
             await discord_user.edit(nick=name)
         elif discord_user is None:
             # only verify MC username
@@ -60,6 +63,7 @@ class AdminCommands(commands.Cog):
                 await interaction.followup.send(f'{discord_user.mention} ({name}) is already verified on Discord!', ephemeral=True)
             else:
                 await discord_user.add_roles(member_role)
+                await self.the_people_channel.send(f'{discord_user.mention} has been added to the Discord server. Please read the rules first!')
             await discord_user.edit(nick=name)
 
     @app_commands.checks.has_any_role('Owner', 'Admin')
