@@ -253,12 +253,20 @@ class ManagerCommands(commands.Cog):
         await self.mod_log_channel.send(embed=embed)
 
     @events_command.autocomplete('event')
-    async def event_command_type_autocomplete(self, interaction: discord.Interaction, event: str
-                                       ) -> list[app_commands.Choice[str]]:
+    async def event_command_type_autocomplete(self, interaction: discord.Interaction, event: str) -> list[app_commands.Choice[str]]:
         event_types = ['amongus', 'movie', 'minigames-comp', 'jackbox']
         return [
-            app_commands.Choice(name=event, value=event)
-            for event in event_types if event.lower() in event.lower()
+            app_commands.Choice(name=discord_event, value=discord_event)
+            for discord_event in event_types if event.lower() in discord_event.lower()
+        ]
+
+    @events_command.autocomplete('event')
+    async def reload_cogs_autocomplete(self, interaction: discord.Interaction, event: str
+    ) -> list[app_commands.Choice[str]]:
+        event_types = ['minecraft', 'discord', 'other']
+        return [
+            app_commands.Choice(name=server, value=server)
+            for server in event_types if event.lower() in server.lower()
         ]
 
     # error handler
