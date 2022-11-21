@@ -118,7 +118,7 @@ class MessageEvents(commands.Cog):
         embed.set_footer(text=str(now.strftime('%H:%M:%S on %A, %B the %dth, %Y') + f': probval={inappropriate_probability}'))
         embed.set_thumbnail(url=author.display_avatar.url)  # https://i.imgur.com/Iw4o4JF.png"
         embed.set_author(name=author, icon_url="https://i.imgur.com/Iw4o4JF.png")
-        embed.add_field(name="inappropriate Message", value=content.replace('@', 'AT'))
+        embed.add_field(name="Message Log", value=content.replace('@', 'AT'))
 
         await self.all_message_log_channel.send(embed=embed)
 
@@ -129,10 +129,12 @@ class MessageEvents(commands.Cog):
             if inappropriate_probability > .75:
                 await message.delete()
                 await self.rule_breaker_log_channel.send(embed=embed)
+                return
         else:
-            if inappropriate_probability > .95:
+            if inappropriate_probability > .99:
                 await message.delete()
                 await self.rule_breaker_log_channel.send(embed=embed)
+                return
 
         # levelling and statistics code
         added_exp = random.randint(1, 8)  # Generate random XP value...
