@@ -260,20 +260,10 @@ class ManagerCommands(commands.Cog):
             for discord_event in event_types if event.lower() in discord_event.lower()
         ]
 
-    @events_command.autocomplete('event')
-    async def reload_cogs_autocomplete(self, interaction: discord.Interaction, event: str
-    ) -> list[app_commands.Choice[str]]:
-        event_types = ['minecraft', 'discord', 'other']
-        return [
-            app_commands.Choice(name=server, value=server)
-            for server in event_types if event.lower() in server.lower()
-        ]
-
     # error handler
     async def on_app_command_error(self, interaction: Interaction, error: AppCommandError):
         embed = diagnostics.log_error('severe', 'command', 'Command failed to run', str(error), str(interaction.user.name), 'manager_commands.py')
         await self.error_log_channel.send(embed=embed)
-
 
 
 async def setup(bot: commands.Bot) -> None:
