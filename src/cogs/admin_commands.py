@@ -93,22 +93,6 @@ class AdminCommands(commands.Cog):
             pass
             # PastebinAPI.paste(self.api_dev_key, api_paste_code, api_user_key = None, paste_name = None, paste_format = None, paste_private = None, paste_expire_date = None)
 
-    @show_code_command.autocomplete('file')
-    async def reload_cogs_autocomplete(self, interaction: discord.Interaction, file: str
-    ) -> list[app_commands.Choice[str]]:
-        # cogs = ['cog_loader', 'invite', 'guild_setup_handler', 'message_events', 'lab_commands', 'manager_commands', 'admin_commands', 'owner_commands', 'watchtower_commands', 'all']
-        self.list_of_cogs = []
-        for ext in os.listdir("cogs"):
-            if ext.endswith(".py") and not ext.startswith("_"):
-                self.list_of_cogs.append(ext[:-3])
-        self.list_of_cogs.append('all')
-
-        cogs = self.list_of_cogs
-        return [
-            app_commands.Choice(name=cog, value=cog)
-            for cog in cogs if file.lower() in cog.lower()
-        ]
-
     # error handler
     async def on_app_command_error(self, interaction: Interaction, error: AppCommandError):
         embed = diagnostics.log_error('severe', 'command', 'Command failed to run', str(error), 'admin_commands.py')

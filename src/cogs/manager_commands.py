@@ -252,7 +252,7 @@ class ManagerCommands(commands.Cog):
         await interaction.response.send_message(embed=embed, ephemeral=False)
         await self.mod_log_channel.send(embed=embed)
 
-    @mute_command.autocomplete('event')
+    @events_command.autocomplete('event')
     async def event_command_type_autocomplete(self, interaction: discord.Interaction, event: str
                                        ) -> list[app_commands.Choice[str]]:
         event_types = ['amongus', 'movie', 'minigames-comp', 'jackbox']

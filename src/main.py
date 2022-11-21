@@ -295,7 +295,7 @@ async def on_ready():
 
     # send a restart notification embed:
     await load_cogs()
-    # await send_restart_notification()
+    await send_restart_notification()
 
     # Begin cycle operations below:
     cycle_bot_status.start()  # Change status of bot:
