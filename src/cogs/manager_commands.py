@@ -21,6 +21,14 @@ class ManagerCommands(commands.Cog):
         self.memes_channel = self.bot.get_channel(configuration.ChannelObjects.memes_channel_id)
         self.theocratic_channel = self.bot.get_channel(configuration.ChannelObjects.theocratic_channel_id)
         self.tech_channel = self.bot.get_channel(784976527447293962)
+        self.amongus_text_channel = self.bot.get_channel(1044114906397544500)
+        self.amongus_vc_channel = self.bot.get_channel(1044118756655382600)
+        self.jackbox_text_channel = self.bot.get_channel(832516473426935869)
+        self.jackbox_vc_channel = self.bot.get_channel(832516334222311435)
+        self.movienight_text_channel = self.bot.get_channel(760027390923243540)
+        self.movienight_vc_channel = self.bot.get_channel(760027477334294550)
+        self.minigames_text_channel = self.bot.get_channel(760425082404339732)
+        self.minigames_vc_channel = self.bot.get_channel(1044120888666238996)
 
         # voice channels
         self.lounge_one_vc_channel = self.bot.get_channel(1035470361782919178)
@@ -205,7 +213,6 @@ class ManagerCommands(commands.Cog):
                                       color=0xff00f6)
                 await self.mod_log_channel.send(embed=embed)
 
-
         await interaction.response.send_message('re-wrapped everyone!', ephemeral=True)
 
     @mute_command.autocomplete('mute_type')
@@ -215,6 +222,43 @@ class ManagerCommands(commands.Cog):
         return [
             app_commands.Choice(name=mute_type, value=mute_type)
             for mute_type in mute_types if mute_type.lower() in mute_type.lower()
+        ]
+
+    @app_commands.checks.has_any_role('Owner', 'Admin', 'Event Manager')
+    @app_commands.command(name="events", description="start and stop events!")
+    async def events_command(self, interaction: discord.Interaction, event: str, status: bool) -> None:
+        if not event:
+            await interaction.response.send_message('What Event?', ephemeral=True)
+            return
+
+        member_role = interaction.guild.get_role(configuration.RoleIDObjects.member_role_id)
+
+        if event == 'amongus':
+            await self.amongus_vc_channel.set_permissions(member_role, view_channel=status)
+            await self.amongus_text_channel.set_permissions(member_role, view_channel=status)
+        elif event == 'movie':
+            await self.movienight_vc_channel.set_permissions(member_role, view_channel=status)
+            await self.movienight_text_channel.set_permissions(member_role, view_channel=status)
+        elif event == 'jackbox':
+            await self.jackbox_vc_channel.set_permissions(member_role, view_channel=status)
+            await self.jackbox_text_channel.set_permissions(member_role, view_channel=status)
+        elif event == 'minigames-comp':
+            await self.minigames_vc_channel.set_permissions(member_role, view_channel=status)
+            await self.minigames_text_channel.set_permissions(member_role, view_channel=status)
+
+        embed = discord.Embed(title=f"{event} Event Started!",
+                              description="**{0}** event started by **{1}**!".format(event, interaction.user, ),
+                              color=0xff00f6)
+        await interaction.response.send_message(embed=embed, ephemeral=False)
+        await self.mod_log_channel.send(embed=embed)
+
+    @mute_command.autocomplete('event')
+    async def event_command_type_autocomplete(self, interaction: discord.Interaction, event: str
+                                       ) -> list[app_commands.Choice[str]]:
+        event_types = ['amongus', 'movie', 'minigames-comp', 'jackbox']
+        return [
+            app_commands.Choice(name=event, value=event)
+            for event in event_types if event.lower() in event.lower()
         ]
 
     # error handler

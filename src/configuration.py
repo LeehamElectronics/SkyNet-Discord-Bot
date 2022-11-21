@@ -58,3 +58,4 @@ class RoleIDObjects:
     owner_role_id = general_role_id_dict['general_roles']['owner']
     admin_role_id = general_role_id_dict['general_roles']['admin']
     mod_role_id = general_role_id_dict['general_roles']['mod']
+    member_role_id = general_role_id_dict['general_roles']['member']
