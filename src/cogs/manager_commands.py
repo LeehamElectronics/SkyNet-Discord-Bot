@@ -30,6 +30,8 @@ class ManagerCommands(commands.Cog):
         self.minigames_text_channel = self.bot.get_channel(760425082404339732)
         self.minigames_vc_channel = self.bot.get_channel(1044120888666238996)
 
+        self.main_rules_channel = self.bot.get_channel(784975037794353163)
+
         # self.lounge_category = self.bot.get_channel(543031470927773706)
 
         # voice channels
@@ -174,6 +176,7 @@ class ManagerCommands(commands.Cog):
             # enable bubblewrap
             await member.add_roles(bubblewraped_role)
             await lounge_category.set_permissions(member, view_channel=False)
+            await self.main_rules_channel.set_permissions(member, view_channel=False)
             # await self.memes_channel.set_permissions(member, view_channel=False)
             # await self.theocratic_channel.set_permissions(member, view_channel=False)
             # await self.tech_channel.set_permissions(member, view_channel=False)
@@ -186,6 +189,7 @@ class ManagerCommands(commands.Cog):
             # disable bubblewrap
             await member.remove_roles(bubblewraped_role)
             await lounge_category.set_permissions(member, view_channel=True)
+            await self.main_rules_channel.set_permissions(member, view_channel=True)
             # await self.memes_channel.set_permissions(member, view_channel=True)
             # await self.theocratic_channel.set_permissions(member, view_channel=True)
             # await self.tech_channel.set_permissions(member, view_channel=True)
@@ -209,6 +213,7 @@ class ManagerCommands(commands.Cog):
         for member in interaction.guild.members:
             if bubblewraped_role in member.roles:
                 await lounge_category.set_permissions(member, view_channel=False)
+                await self.main_rules_channel.set_permissions(member, view_channel=False)
                 await member.add_roles(bubblewraped_role)
                 embed = discord.Embed(title="User re-bubblewraped!",
                                       description="**{0}** was re-bubblewraped by **{1}**!".format(member, interaction.user, ),
