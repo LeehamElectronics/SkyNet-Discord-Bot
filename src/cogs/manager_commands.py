@@ -204,15 +204,12 @@ class ManagerCommands(commands.Cog):
     async def rebubblewrap_command(self, interaction: discord.Interaction) -> None:
 
         bubblewraped_role = interaction.guild.get_role(1034728199994740776)
+        lounge_category = discord.utils.get(interaction.guild.categories, id=543031470927773706)
 
         for member in interaction.guild.members:
             if bubblewraped_role in member.roles:
+                await lounge_category.set_permissions(member, view_channel=False)
                 await member.add_roles(bubblewraped_role)
-                await self.memes_channel.set_permissions(member, view_channel=False)
-                await self.theocratic_channel.set_permissions(member, view_channel=False)
-                await self.tech_channel.set_permissions(member, view_channel=False)
-                await self.lounge_one_vc_channel.set_permissions(member, view_channel=True, connect=False)
-                await self.lounge_two_vc_channel.set_permissions(member, view_channel=True, connect=False)
                 embed = discord.Embed(title="User re-bubblewraped!",
                                       description="**{0}** was re-bubblewraped by **{1}**!".format(member, interaction.user, ),
                                       color=0xff00f6)
